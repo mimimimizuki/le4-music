@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring accessors="true" comment="Delete element from project &apos;le4-music&apos;&#x0A;- Original project: &apos;le4-music&apos;&#x0A;- Original element: &apos;test.java&apos;" description="Delete element" element1="/src&lt;{test.java" elements="1" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1574919677291" subPackages="false" version="1.0"/>&#x0A;<refactoring comment="Rename resource &apos;le4-music/src/lemusic.css&apos; to &apos;le4music.css&apos;" description="Rename resource &apos;lemusic.css&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/lemusic.css" name="le4music.css" stamp="1574924485508" updateReferences="true"/>
+</session>

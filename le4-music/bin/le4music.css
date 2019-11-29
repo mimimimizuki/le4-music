@@ -1,0 +1,64 @@
+.chart-title {
+  -fx-font-size: 2.0em;
+}
+
+.chart-series-line {
+  -fx-stroke-width: 0.5px;
+  -fx-effect: null;
+}
+
+.on-spectrogram .chart-series-line {
+  -fx-stroke: rgba(0, 255, 255, 0.7);
+  -fx-stroke-width: 5.0px;
+  -fx-effect: null;
+}
+
+.axis {
+  -fx-font-size: 1.5em;
+  -fx-tick-label-font-size: 1.2em;
+}
+
+.range-marker0 {
+  -fx-fill: #ff2800;
+  -fx-opacity: 0.2;
+}
+
+.range-marker1 {
+  -fx-fill: #faf500;
+  -fx-opacity: 0.2;
+}
+
+.range-marker2 {
+  -fx-fill: #35a16b;
+  -fx-opacity: 0.2;
+}
+
+.range-marker3 {
+  -fx-fill: #0041ff;
+  -fx-opacity: 0.2;
+}
+
+.range-marker4 {
+  -fx-fill: #66ccff;
+  -fx-opacity: 0.2;
+}
+
+.range-marker5 {
+  -fx-fill: #ff990a;
+  -fx-opacity: 0.2;
+}
+
+.range-marker6 {
+  -fx-fill: #ff9900;
+  -fx-opacity: 0.2;
+}
+
+.range-marker7 {
+  -fx-fill: #9a0079;
+  -fx-opacity: 0.2;
+}
+
+.range-marker8 {
+  -fx-fill: #663300;
+  -fx-opacity: 0.2;
+}
