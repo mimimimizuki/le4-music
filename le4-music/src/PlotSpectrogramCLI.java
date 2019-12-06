@@ -115,9 +115,8 @@ public final class PlotSpectrogramCLI extends Application {
 
         /* Y 軸を作成 */
         final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "Frequency (Hz)", /* lowerBound = */ 0.0,
-                /* upperBound = */ nyquist, /* tickUnit = */ Le4MusicUtils.autoTickUnit(nyquist));
+                /* upperBound = */ 300, /* tickUnit = */ Le4MusicUtils.autoTickUnit(300));
         yAxis.setAnimated(false);
-
 
         /* チャートを作成 */
         final LineChartWithSpectrogram<Number, Number> chart = new LineChartWithSpectrogram<>(xAxis, yAxis);

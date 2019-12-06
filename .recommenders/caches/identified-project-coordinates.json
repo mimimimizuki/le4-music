@@ -1,1 +1,1 @@
-[[{"location":"/export/home/017/a0176381/le4-music/le4music.jar","type":"JAR","hints":{}},"ABSENT"]]
+[[{"location":"/export/home/017/a0176381/eclipse-music/le4-music/src/lib/le4music.jar","type":"JAR","hints":{}},"ABSENT"],[{"location":"/usr/lib/jvm/java-8-oracle/jre/lib/ext/jfxrt.jar","type":"JAR","hints":{}},"ABSENT"],[{"location":"/usr/lib/jvm/java-8-oracle","type":"JRE","hints":{"EXECUTION_ENVIRONMENT":"JavaSE-1.8"}},"jre:jre:1.8.0"]]

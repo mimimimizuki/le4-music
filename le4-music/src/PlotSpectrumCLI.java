@@ -148,8 +148,8 @@ public final class PlotSpectrumCLI extends Application {
         final NumberAxis xAxis = new NumberAxis(
             /* axisLabel = */ "Frequency (Hz)",
             /* lowerBound = */ freqLowerBound,
-            /* upperBound = */ freqUpperBound,
-            /* tickUnit = */ Le4MusicUtils.autoTickUnit(freqUpperBound - freqLowerBound)
+            /* upperBound = */ freqUpperBound / 3,
+            /* tickUnit = */ Le4MusicUtils.autoTickUnit(freqUpperBound / 3 - freqLowerBound)
         );
         xAxis.setAnimated(false);
 
