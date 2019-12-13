@@ -143,7 +143,7 @@ public final class PlotYesNoCLI extends Application {
         	}
         }
         
-        for (int i = 0; i < 25; i+=zuras) {//
+        for (int i = 0; i < 25; i++) {//
         		for (int j = 0; j < frameSize; j++) {
         			if((i * frameSize + j) * sampleRate / fftSize < upperf0 && (i * frameSize + j) * sampleRate / fftSize > lowerf0 && waveform[i * frameSize + j] > f0[i]) {
         				new_freq[i] = j + frameSize * i;

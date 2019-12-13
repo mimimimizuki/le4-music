@@ -130,7 +130,6 @@ public final class PlotYesNoCLI extends Application {
         final double[] freqs = IntStream.range(0, fftSize2).mapToDouble(i -> i * sampleRate / fftSize).toArray();
         
         double[] f0 = new double [25]; // 25 = waveform.length / frameSize
-        final double zuras = frameSize / 32;
         double[] new_freq = new double [waveform.length];
         final double lowerf0 = Le4MusicUtils.f0LowerBound;
         final double upperf0 = 400;
@@ -143,9 +142,10 @@ public final class PlotYesNoCLI extends Application {
         	}
         }
         
-        for (int i = 0; i < 25; i+=zuras) {//
+        for (int i = 0; i < 25; i++) {//
         		for (int j = 0; j < frameSize; j++) {
         			if((i * frameSize + j) * sampleRate / fftSize < upperf0 && (i * frameSize + j) * sampleRate / fftSize > lowerf0 && waveform[i * frameSize + j] > f0[i]) {
+        				f0[i] = waveform[i * frameSize + j]; 
         				new_freq[i] = j + frameSize * i;
         				System.out.println("ok, " + new_freq[i]);
         			}
@@ -155,7 +155,7 @@ public final class PlotYesNoCLI extends Application {
         for(int i = 0; i < new_freq.length; i ++) {
         	int zero_cross = 0;
         	for(int j = 0; j < frameSize-1; j++) {
-        		if(waveform[i * frameSize + j] * waveform[i * frameSize + j + 1] < 0 && i * frameSize + j + 1 < waveform.length) {
+        		if(waveform[i * frameSize + j] * waveform[i * frameSize + j + 1] < 0) {
         			zero_cross += 1;
         		}
         	}
