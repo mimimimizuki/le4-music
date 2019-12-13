@@ -3,8 +3,9 @@
 }
 
 .chart-series-line {
-  -fx-stroke-width: 0.5px;
+  -fx-stroke-width: 2px;
   -fx-effect: null;
+  -fx-stroke: white;
 }
 
 .on-spectrogram .chart-series-line {

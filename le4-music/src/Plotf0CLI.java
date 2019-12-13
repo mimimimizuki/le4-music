@@ -109,6 +109,15 @@ public final class Plotf0CLI extends Application {
         double[][] specLog = spectrogram.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
                 .toArray(n -> new double[n][]);
         
+        /* 短時間フーリエ変換本体 */
+        final Stream<Complex[]> spectrogram1 = Le4MusicUtils.sliding(waveform, window, shiftSize)
+                .map(frame -> Le4MusicUtils.rfft(frame));
+
+        /* 複素スペクトログラムを対数振幅スペクトログラムに */
+        final double[][] specLog1 = spectrogram1.map(sp -> Arrays.stream(sp).mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray())
+                .toArray(n -> new double[n][]);
+
+        
         /* 参考： フレーム数と各フレーム先頭位置の時刻 */
         final double[] times = IntStream.range(0, specLog.length).mapToDouble(i -> i * shiftDuration).toArray();
         
@@ -119,7 +128,7 @@ public final class Plotf0CLI extends Application {
         double[] f0 = new double [times.length];
         double[] new_freq = new double [times.length];
         final double lowerf0 = Le4MusicUtils.f0LowerBound;
-        final double upperf0 = Le4MusicUtils.f0UpperBound;
+        final double upperf0 = 400;
         for (int i = 0; i < times.length; i++) {
         		// specLog[i][j]が振幅
         		for (int j = 0; j < specLog[i].length; j++) {
@@ -131,18 +140,7 @@ public final class Plotf0CLI extends Application {
         			}
         		}
         }
-       
-        System.out.println("aaa");
-        
-        System.out.println(new_freq[0]);
-        System.out.println(new_freq[1]);
-        System.out.println(new_freq[2]);
-        
-        System.out.println(f0[0]);
-        System.out.println(f0[1]);
-        System.out.println(f0[2]);
-        
-        
+
         
         /* データ系列を作成*/
         final ObservableList<XYChart.Data<Number, Number>> data =
@@ -167,11 +165,13 @@ public final class Plotf0CLI extends Application {
 
         /* Y 軸を作成*/
         final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "Frequency (Hz)", /* lowerBound = */ 0.0,
-                /* upperBound = */ 300, /* tickUnit = */ Le4MusicUtils.autoTickUnit(300));
+                /* upperBound = */ 600, /* tickUnit = */ Le4MusicUtils.autoTickUnit(600));
         yAxis.setAnimated(false);
 
         /* チャートを作成*/
-        final LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
+        final LineChartWithSpectrogram<Number, Number> chart = new LineChartWithSpectrogram<>(xAxis, yAxis);
+        chart.setParameters(specLog.length, fftSize2, nyquist);
+        Arrays.stream(specLog1).forEach(chart::addSpecLog);
         chart.setTitle("f0");
         chart.setCreateSymbols(false);
         chart.setLegendVisible(false);
@@ -179,7 +179,7 @@ public final class Plotf0CLI extends Application {
 
         /* グラフ描画*/
         final Scene scene = new Scene(chart, 800, 600);
-        scene.getStylesheets().add("src/le4music.css");
+        scene.getStylesheets().add("le4music.css");
 
         /* ウインドウ表示*/
         primaryStage.setScene(scene);

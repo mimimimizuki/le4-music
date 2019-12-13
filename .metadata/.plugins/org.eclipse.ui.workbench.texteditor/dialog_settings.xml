@@ -9,6 +9,7 @@
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
 			<item value="addSpecLog"/>
+			<item value="addSpeclOG"/>
 			<item value="amp"/>
 			<item value="WAVFILE"/>
 		</list>
