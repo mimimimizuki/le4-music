@@ -129,58 +129,49 @@ public final class PlotYesNoCLI extends Application {
         /* 参考： 各フーリエ変換係数に対応する周波数 */
         final double[] freqs = IntStream.range(0, fftSize2).mapToDouble(i -> i * sampleRate / fftSize).toArray();
         
-        final int  N = waveform.length; //80000
-        final int frame = frameSize / 32; //100
-        final int interval = frame / 4; //25
-        double[] new_freq = new double [N];
+        double[] f0 = new double [25]; // 25 = waveform.length / frameSize
+        final double zuras = frameSize / 32;
+        double[] new_freq = new double [waveform.length];
         final double lowerf0 = Le4MusicUtils.f0LowerBound;
         final double upperf0 = 400;
-        final double[] max = new double[N];
-        final int[] index = new int[N];
-        for(int i = 0; i < N - frame; i += interval) {
-        	max[i] = 0;
-        	for(int j = i; j < frame + i; j++) {
-        		if(waveform[j] > max[j] && upperf0 > sampleRate * j / fftSize && lowerf0 <  sampleRate * j / fftSize) {
-        			max[j] = waveform[j];
-        			index[j] = j;
+        
+        for(int i = 0; i < 25; i ++) {
+        	for(int j = 0; j < frameSize; j ++) {
+        		if(waveform[i * frameSize + j] > f0[i]) {
+        			f0[i] = waveform[i * frameSize + j];//各フレームごとの最大振幅を配列f0に格納
         		}
         	}
         }
         
-        System.out.println(interval);
-        System.out.println(frame);
-        System.out.print(N);
+        for (int i = 0; i < 25; i+=zuras) {//
+        		for (int j = 0; j < frameSize; j++) {
+        			if((i * frameSize + j) * sampleRate / fftSize < upperf0 && (i * frameSize + j) * sampleRate / fftSize > lowerf0 && waveform[i * frameSize + j] > f0[i]) {
+        				new_freq[i] = j + frameSize * i;
+        				System.out.println("ok, " + new_freq[i]);
+        			}
+        		}
+        }
         
-        
-//        for (int i = 0; i < 25; i+=interval) {//
-//        		for (int j = 0; j < frameSize; j++) {
-//        			if((i * frameSize + j) * sampleRate / fftSize < upperf0 && (i * frameSize + j) * sampleRate / fftSize > lowerf0 && waveform[i * frameSize + j] > f0[i]) {
-//        				new_freq[i] = j + frameSize * i;
-//        				System.out.println("ok, " + new_freq[i]);
-//        			}
-//        		}
-//        }
-//        
-//        for(int i = 0; i < new_freq.length; i ++) {
-//        	int zero_cross = 0;
-//        	for(int j = 0; j < frameSize-1; j++) {
-//        		if(waveform[i * frameSize + j] * waveform[i * frameSize + j + 1] < 0 && i * frameSize + j + 1 < waveform.length) {
-//        			zero_cross += 1;
-//        		}
-//        	}
-//        	System.out.println(zero_cross);
-//        	if(zero_cross >= 2 * new_freq[i] * sampleRate / fftSize) {
-//        		new_freq[i] = 0;
-//        		System.out.println("changes");
-//        	}
-//        	System.out.print(i + " : " + new_freq[i] * sampleRate / fftSize); //*= 84
-//        	
-//        }
+        for(int i = 0; i < new_freq.length; i ++) {
+        	int zero_cross = 0;
+        	for(int j = 0; j < frameSize-1; j++) {
+        		if(waveform[i * frameSize + j] * waveform[i * frameSize + j + 1] < 0 && i * frameSize + j + 1 < waveform.length) {
+        			zero_cross += 1;
+        		}
+        	}
+        	System.out.println(zero_cross);
+        	if(zero_cross >= 2 * new_freq[i] * sampleRate / fftSize) {
+        		new_freq[i] = 0;
+        		System.out.println("changes");
+        	}
+        	System.out.print(i + " : " + new_freq[i] * sampleRate / fftSize); //*= 84
+        	
+        }
         
         /* データ系列を作成*/
         final ObservableList<XYChart.Data<Number, Number>> data =
-            IntStream.range(0, index.length)
-                    .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, sampleRate * index[i] / fftSize))
+            IntStream.range(0, new_freq.length)
+                    .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, new_freq[i] * sampleRate / fftSize))
                     .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         /* データ系列に名前をつける*/

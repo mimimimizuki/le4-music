@@ -129,9 +129,9 @@ public final class PlotYesNoCLI extends Application {
         /* 参考： 各フーリエ変換係数に対応する周波数 */
         final double[] freqs = IntStream.range(0, fftSize2).mapToDouble(i -> i * sampleRate / fftSize).toArray();
         
-        final int  N = waveform.length; //80000
-        final int frame = frameSize / 32; //100
-        final int interval = frame / 4; //25
+        final int  N = waveform.length;
+        final int frame = frameSize / 32;
+        final int interval = frame / 4;
         double[] new_freq = new double [N];
         final double lowerf0 = Le4MusicUtils.f0LowerBound;
         final double upperf0 = 400;
@@ -140,16 +140,12 @@ public final class PlotYesNoCLI extends Application {
         for(int i = 0; i < N - frame; i += interval) {
         	max[i] = 0;
         	for(int j = i; j < frame + i; j++) {
-        		if(waveform[j] > max[j] && upperf0 > sampleRate * j / fftSize && lowerf0 <  sampleRate * j / fftSize) {
+        		if(waveform[j] > max[j] && upperf0 > sampleRate / j && lowerf0 <  sampleRate / j) {
         			max[j] = waveform[j];
         			index[j] = j;
         		}
         	}
         }
-        
-        System.out.println(interval);
-        System.out.println(frame);
-        System.out.print(N);
         
         
 //        for (int i = 0; i < 25; i+=interval) {//
@@ -180,7 +176,7 @@ public final class PlotYesNoCLI extends Application {
         /* データ系列を作成*/
         final ObservableList<XYChart.Data<Number, Number>> data =
             IntStream.range(0, index.length)
-                    .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, sampleRate * index[i] / fftSize))
+                    .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, index[i] * sampleRate / fftSize))
                     .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         /* データ系列に名前をつける*/
