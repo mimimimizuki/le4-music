@@ -116,6 +116,13 @@ public final class Plotf0CLI extends Application {
         /* 複素スペクトログラムを対数振幅スペクトログラムに */
         final double[][] specLog1 = spectrogram1.map(sp -> Arrays.stream(sp).mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray())
                 .toArray(n -> new double[n][]);
+        
+        final Stream<Complex[]> spectrogram2 = Le4MusicUtils.sliding(waveform, window, shiftSize)
+                .map(frame -> Le4MusicUtils.rfft(frame));
+
+        /* 複素スペクトログラムを対数振幅スペクトログラムに */
+        double[][] specLog2 = spectrogram2.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.getReal()).toArray())
+                .toArray(n -> new double[n][]);
 
         
         /* 参考： フレーム数と各フレーム先頭位置の時刻 */
@@ -123,25 +130,39 @@ public final class Plotf0CLI extends Application {
         
         /* 参考： 各フーリエ変換係数に対応する周波数 */
         final double[] freqs = IntStream.range(0, fftSize2).mapToDouble(i -> i * sampleRate / fftSize).toArray();
-        
+        System.out.println(times.length);
         
         double[] f0 = new double [times.length];
         double[] new_freq = new double [times.length];
         final double lowerf0 = Le4MusicUtils.f0LowerBound;
         final double upperf0 = 400;
+        
         for (int i = 0; i < times.length; i++) {
-        		// specLog[i][j]が振幅
-        		for (int j = 0; j < specLog[i].length; j++) {
-        			if(j * sampleRate / fftSize < upperf0 && j * sampleRate / fftSize > lowerf0 && specLog[i][j] > f0[i]) {
-        				f0[i] = specLog[i][j]; 
-        				System.out.print(i);
-        				System.out.println("," + j);
-        				new_freq[i] = j;
-        			}
+    		// specLog[i][j]が振幅
+    		for (int j = 0; j < specLog[i].length; j++) {
+    			if(j * sampleRate / fftSize < upperf0 && j * sampleRate / fftSize > lowerf0 && specLog[i][j] > f0[i]) {
+    				f0[i] = specLog[i][j]; 
+    				new_freq[i] = j;
+    			}
+    		}
+        }
+        System.out.print(shiftSize);
+        System.out.print(frameSize);
+        int pointer = 0;
+        for(int m = 0; m < waveform.length-1-frameSize; m+=shiftSize) {
+        	int zero_counter = 0;
+        	for(int n = m; n < m + frameSize-1; n++) {
+        		if (waveform[n] * waveform[n+1] < 0) {
+            		zero_counter += 1;
         		}
+        	}
+        	if(zero_counter > 2 * new_freq[pointer]) {
+        		new_freq[pointer] = 0;
+        	}
+        	pointer++;
         }
 
-        
+
         /* データ系列を作成*/
         final ObservableList<XYChart.Data<Number, Number>> data =
             IntStream.range(0, f0.length)
@@ -185,10 +206,7 @@ public final class Plotf0CLI extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle(getClass().getName());
         primaryStage.show();
-        
-        for(int i=0;i<f0.length;i++) {
-        	System.out.println(f0[i]);
-        }
+
 
         /* チャートを画像ファイルへ出力 */
         Platform.runLater(() -> {

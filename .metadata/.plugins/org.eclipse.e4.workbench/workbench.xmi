@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_RiCCcBy3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.legacy.ide.application" contributorURI="platform:/plugin/org.eclipse.platform" selectedElement="_RiCCcRy3EeqR5Iq8qzS__w" bindingContexts="_RiDSxxy3EeqR5Iq8qzS__w">
-  <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;workbench>&#xA;&lt;mruList>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotYesNoCLI.java&quot; tooltip=&quot;le4-music/src/PlotYesNoCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotYesNoCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;Plotf0CLI.java&quot; tooltip=&quot;le4-music/src/Plotf0CLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/Plotf0CLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotcepstrumCLI.java&quot; tooltip=&quot;le4-music/src/PlotcepstrumCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotcepstrumCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.jdt.ui.ClassFileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.ClassFileEditor&quot; name=&quot;LauncherImpl.class&quot; tooltip=&quot;com.sun.javafx.application.LauncherImpl&quot;>&#xA;&lt;persistable org.eclipse.jdt.ui.ClassFileIdentifier=&quot;=le4-music/\/usr\/lib\/jvm\/java-8-oracle\/jre\/lib\/ext\/jfxrt.jar&amp;lt;com.sun.javafx.application(LauncherImpl.class&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotEnvelopeCLI.java&quot; tooltip=&quot;le4-music/src/PlotEnvelopeCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotEnvelopeCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotautoCLI.java&quot; tooltip=&quot;le4-music/src/PlotautoCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotautoCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.wst.css.core.csssource.source&quot; name=&quot;le4music.css&quot; tooltip=&quot;le4-music/src/le4music.css&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/le4music.css&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotVolumeCLI.java&quot; tooltip=&quot;le4-music/src/PlotVolumeCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotVolumeCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.jdt.ui.ClassFileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.ClassFileEditor&quot; name=&quot;Le4MusicUtils.class&quot; tooltip=&quot;jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils&quot;>&#xA;&lt;persistable org.eclipse.jdt.ui.ClassFileIdentifier=&quot;=le4-music/src\/lib\/le4music.jar&amp;lt;jp.ac.kyoto_u.kuis.le4music(Le4MusicUtils.class&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.jdt.ui.ClassFileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.ClassFileEditor&quot; name=&quot;Comparator.class&quot; tooltip=&quot;java.util.Comparator&quot;>&#xA;&lt;persistable org.eclipse.jdt.ui.ClassFileIdentifier=&quot;=le4-music/\/usr\/lib\/jvm\/java-8-oracle\/jre\/lib\/rt.jar&amp;lt;java.util(Comparator.class&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.jdt.ui.ClassFileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.ClassFileEditor&quot; name=&quot;Streams.class&quot; tooltip=&quot;java.util.stream.Streams&quot;>&#xA;&lt;persistable org.eclipse.jdt.ui.ClassFileIdentifier=&quot;=le4-music/\/usr\/lib\/jvm\/java-8-oracle\/jre\/lib\/rt.jar&amp;lt;java.util.stream(Streams.class&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotSpectrogramCLI.java&quot; tooltip=&quot;le4-music/src/PlotSpectrogramCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotSpectrogramCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotSpectrumCLI.java&quot; tooltip=&quot;le4-music/src/PlotSpectrumCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotSpectrumCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotWaveformCLI.java&quot; tooltip=&quot;le4-music/src/PlotWaveformCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotWaveformCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlayMonitorSpectrogram.java&quot; tooltip=&quot;le4-music/src/PlayMonitorSpectrogram.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlayMonitorSpectrogram.java&quot;/>&#xA;&lt;/file>&#xA;&lt;/mruList>&#xA;&lt;/workbench>"/>
+  <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;workbench>&#xA;&lt;mruList>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotaiueoCLI.java&quot; tooltip=&quot;le4-music/src/PlotaiueoCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotaiueoCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotcepstrumCLI.java&quot; tooltip=&quot;le4-music/src/PlotcepstrumCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotcepstrumCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;Le4MusicUtils.java&quot; tooltip=&quot;le4-music/src/Le4MusicUtils.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/Le4MusicUtils.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotYesNoCLI.java&quot; tooltip=&quot;le4-music/src/PlotYesNoCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotYesNoCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;Plotf0CLI.java&quot; tooltip=&quot;le4-music/src/Plotf0CLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/Plotf0CLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotSpectrogramCLI.java&quot; tooltip=&quot;le4-music/src/PlotSpectrogramCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotSpectrogramCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.jdt.ui.ClassFileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.ClassFileEditor&quot; name=&quot;LauncherImpl.class&quot; tooltip=&quot;com.sun.javafx.application.LauncherImpl&quot;>&#xA;&lt;persistable org.eclipse.jdt.ui.ClassFileIdentifier=&quot;=le4-music/\/usr\/lib\/jvm\/java-8-oracle\/jre\/lib\/ext\/jfxrt.jar&amp;lt;com.sun.javafx.application(LauncherImpl.class&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotEnvelopeCLI.java&quot; tooltip=&quot;le4-music/src/PlotEnvelopeCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotEnvelopeCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotautoCLI.java&quot; tooltip=&quot;le4-music/src/PlotautoCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotautoCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.wst.css.core.csssource.source&quot; name=&quot;le4music.css&quot; tooltip=&quot;le4-music/src/le4music.css&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/le4music.css&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotVolumeCLI.java&quot; tooltip=&quot;le4-music/src/PlotVolumeCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotVolumeCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.jdt.ui.ClassFileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.ClassFileEditor&quot; name=&quot;Le4MusicUtils.class&quot; tooltip=&quot;jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils&quot;>&#xA;&lt;persistable org.eclipse.jdt.ui.ClassFileIdentifier=&quot;=le4-music/src\/lib\/le4music.jar&amp;lt;jp.ac.kyoto_u.kuis.le4music(Le4MusicUtils.class&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.jdt.ui.ClassFileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.ClassFileEditor&quot; name=&quot;Comparator.class&quot; tooltip=&quot;java.util.Comparator&quot;>&#xA;&lt;persistable org.eclipse.jdt.ui.ClassFileIdentifier=&quot;=le4-music/\/usr\/lib\/jvm\/java-8-oracle\/jre\/lib\/rt.jar&amp;lt;java.util(Comparator.class&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.jdt.ui.ClassFileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.ClassFileEditor&quot; name=&quot;Streams.class&quot; tooltip=&quot;java.util.stream.Streams&quot;>&#xA;&lt;persistable org.eclipse.jdt.ui.ClassFileIdentifier=&quot;=le4-music/\/usr\/lib\/jvm\/java-8-oracle\/jre\/lib\/rt.jar&amp;lt;java.util.stream(Streams.class&quot;/>&#xA;&lt;/file>&#xA;&lt;file factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotSpectrumCLI.java&quot; tooltip=&quot;le4-music/src/PlotSpectrumCLI.java&quot;>&#xA;&lt;persistable path=&quot;/le4-music/src/PlotSpectrumCLI.java&quot;/>&#xA;&lt;/file>&#xA;&lt;/mruList>&#xA;&lt;/workbench>"/>
   <tags>activeSchemeId:org.eclipse.ui.defaultAcceleratorConfiguration</tags>
   <tags>ModelMigrationProcessor.001</tags>
-  <children xsi:type="basic:TrimmedWindow" xmi:id="_RiCCcRy3EeqR5Iq8qzS__w" elementId="IDEWindow" contributorURI="platform:/plugin/org.eclipse.platform" selectedElement="_RiCCchy3EeqR5Iq8qzS__w" label="%trimmedwindow.label.eclipseSDK" x="675" y="59" width="1863" height="1059">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_RiCCcRy3EeqR5Iq8qzS__w" elementId="IDEWindow" contributorURI="platform:/plugin/org.eclipse.platform" selectedElement="_RiCCchy3EeqR5Iq8qzS__w" label="%trimmedwindow.label.eclipseSDK" x="842" y="111" width="1290" height="1091">
     <persistedState key="coolBarVisible" value="true"/>
     <persistedState key="perspectiveBarVisible" value="true"/>
     <persistedState key="isRestored" value="true"/>
@@ -169,9 +169,10 @@
           <tags>persp.viewSC:org.eclipse.ant.ui.views.AntView</tags>
           <tags>persp.actionSet:org.eclipse.debug.ui.debugActionSet</tags>
           <children xsi:type="basic:PartSashContainer" xmi:id="_RiCCjhy3EeqR5Iq8qzS__w" selectedElement="_RiCCmBy3EeqR5Iq8qzS__w" horizontal="true">
-            <children xsi:type="basic:PartSashContainer" xmi:id="_RiCCjxy3EeqR5Iq8qzS__w" containerData="1814" selectedElement="_RiCCkBy3EeqR5Iq8qzS__w">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_RiCCjxy3EeqR5Iq8qzS__w" containerData="1286" selectedElement="_RiCCkBy3EeqR5Iq8qzS__w">
               <children xsi:type="basic:PartStack" xmi:id="_RiCCkBy3EeqR5Iq8qzS__w" elementId="left" containerData="6000" selectedElement="_RiCCkRy3EeqR5Iq8qzS__w">
                 <tags>org.eclipse.e4.primaryNavigationStack</tags>
+                <tags>MinimizedByZoom</tags>
                 <children xsi:type="advanced:Placeholder" xmi:id="_RiCCkRy3EeqR5Iq8qzS__w" elementId="org.eclipse.jdt.ui.PackageExplorer" ref="_RiCrlBy3EeqR5Iq8qzS__w"/>
                 <children xsi:type="advanced:Placeholder" xmi:id="_RiCCkhy3EeqR5Iq8qzS__w" elementId="org.eclipse.jdt.ui.TypeHierarchy" toBeRendered="false" ref="_RiCrBBy3EeqR5Iq8qzS__w"/>
                 <children xsi:type="advanced:Placeholder" xmi:id="_RiCCkxy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.views.ResourceNavigator" toBeRendered="false" ref="_RiCrAxy3EeqR5Iq8qzS__w"/>
@@ -182,29 +183,38 @@
                 <children xsi:type="advanced:Placeholder" xmi:id="_RiCClxy3EeqR5Iq8qzS__w" elementId="org.eclipse.egit.ui.RepositoriesView" toBeRendered="false" ref="_RiCsCxy3EeqR5Iq8qzS__w"/>
               </children>
             </children>
-            <children xsi:type="basic:PartSashContainer" xmi:id="_RiCCmBy3EeqR5Iq8qzS__w" containerData="8186" selectedElement="_RiCCmRy3EeqR5Iq8qzS__w">
-              <children xsi:type="basic:PartSashContainer" xmi:id="_RiCCmRy3EeqR5Iq8qzS__w" containerData="9000" selectedElement="_RiCCmhy3EeqR5Iq8qzS__w" horizontal="true">
-                <children xsi:type="basic:PartSashContainer" xmi:id="_RiCCmhy3EeqR5Iq8qzS__w" containerData="5000" selectedElement="_RiCCmxy3EeqR5Iq8qzS__w">
-                  <children xsi:type="advanced:Placeholder" xmi:id="_RiCCmxy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.editorss" containerData="6641" ref="_RiCq2Ry3EeqR5Iq8qzS__w"/>
-                  <children xsi:type="basic:PartStack" xmi:id="_RiCCnBy3EeqR5Iq8qzS__w" elementId="PartStack@31d9983d" containerData="2841" selectedElement="_RiCCnRy3EeqR5Iq8qzS__w">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_RiCCmBy3EeqR5Iq8qzS__w" containerData="8714" selectedElement="_RiCCmRy3EeqR5Iq8qzS__w">
+              <children xsi:type="basic:PartSashContainer" xmi:id="_RiCCmRy3EeqR5Iq8qzS__w" containerData="9000" selectedElement="_fVOl8CIwEeqMKNC2X4KzTg" horizontal="true">
+                <children xsi:type="basic:PartSashContainer" xmi:id="_fVOl8CIwEeqMKNC2X4KzTg" containerData="4988" selectedElement="_RiCCnBy3EeqR5Iq8qzS__w">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_RiCCmxy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.editorss" containerData="5000" ref="_RiCq2Ry3EeqR5Iq8qzS__w">
+                    <tags>Maximized</tags>
+                  </children>
+                  <children xsi:type="basic:PartStack" xmi:id="_RiCCnBy3EeqR5Iq8qzS__w" elementId="PartStack@31d9983d" containerData="5000" selectedElement="_RiCCnRy3EeqR5Iq8qzS__w">
+                    <tags>MinimizedByZoom</tags>
                     <children xsi:type="advanced:Placeholder" xmi:id="_RiCCnRy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.console.ConsoleView" ref="_RiCrFBy3EeqR5Iq8qzS__w"/>
                   </children>
                 </children>
-                <children xsi:type="basic:PartSashContainer" xmi:id="_RiCpgBy3EeqR5Iq8qzS__w" containerData="2500" selectedElement="_RiCpgRy3EeqR5Iq8qzS__w">
-                  <children xsi:type="basic:PartStack" xmi:id="_RiCpgRy3EeqR5Iq8qzS__w" elementId="org.eclipse.mylyn.tasks.ui.views.tasksMStack" containerData="5000" selectedElement="_RiCpghy3EeqR5Iq8qzS__w">
+                <children xsi:type="basic:PartSashContainer" xmi:id="_RiCpgBy3EeqR5Iq8qzS__w" visible="false" containerData="2512" selectedElement="_RiCpgRy3EeqR5Iq8qzS__w">
+                  <children xsi:type="basic:PartStack" xmi:id="_RiCpgRy3EeqR5Iq8qzS__w" elementId="org.eclipse.mylyn.tasks.ui.views.tasksMStack" visible="false" containerData="5000" selectedElement="_RiCpghy3EeqR5Iq8qzS__w">
+                    <tags>Minimized</tags>
+                    <tags>MinimizedByZoom</tags>
                     <children xsi:type="advanced:Placeholder" xmi:id="_RiCpghy3EeqR5Iq8qzS__w" elementId="org.eclipse.mylyn.tasks.ui.views.tasks" ref="_RiCrkRy3EeqR5Iq8qzS__w"/>
                   </children>
-                  <children xsi:type="basic:PartStack" xmi:id="_RiCpgxy3EeqR5Iq8qzS__w" elementId="right" containerData="5000" selectedElement="_RiCphBy3EeqR5Iq8qzS__w">
+                  <children xsi:type="basic:PartStack" xmi:id="_RiCpgxy3EeqR5Iq8qzS__w" elementId="right" visible="false" containerData="5000" selectedElement="_RiCphBy3EeqR5Iq8qzS__w">
                     <tags>org.eclipse.e4.secondaryNavigationStack</tags>
+                    <tags>Minimized</tags>
+                    <tags>MinimizedByZoom</tags>
                     <children xsi:type="advanced:Placeholder" xmi:id="_RiCphBy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.views.ContentOutline" ref="_RiCrjhy3EeqR5Iq8qzS__w"/>
                     <children xsi:type="advanced:Placeholder" xmi:id="_RiCphRy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.texteditor.TemplatesView" toBeRendered="false" ref="_RiCsChy3EeqR5Iq8qzS__w"/>
                     <children xsi:type="advanced:Placeholder" xmi:id="_RiCphhy3EeqR5Iq8qzS__w" elementId="org.eclipse.ant.ui.views.AntView" toBeRendered="false" ref="_RiCsDhy3EeqR5Iq8qzS__w"/>
                   </children>
                 </children>
               </children>
-              <children xsi:type="basic:PartStack" xmi:id="_RiCphxy3EeqR5Iq8qzS__w" elementId="bottom" containerData="1000" selectedElement="_zoUVwB18EeqCM9EjWm-KXw">
+              <children xsi:type="basic:PartStack" xmi:id="_RiCphxy3EeqR5Iq8qzS__w" elementId="bottom" visible="false" containerData="1000" selectedElement="_zoUVwB18EeqCM9EjWm-KXw">
                 <tags>org.eclipse.e4.secondaryDataStack</tags>
                 <tags>Debug</tags>
+                <tags>Minimized</tags>
+                <tags>MinimizedByZoom</tags>
                 <children xsi:type="advanced:Placeholder" xmi:id="_RiCpiBy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.views.ProblemView" ref="_RiCrDRy3EeqR5Iq8qzS__w"/>
                 <children xsi:type="advanced:Placeholder" xmi:id="_RiCpiRy3EeqR5Iq8qzS__w" elementId="org.eclipse.jdt.ui.JavadocView" ref="_RiCsCBy3EeqR5Iq8qzS__w"/>
                 <children xsi:type="advanced:Placeholder" xmi:id="_RiCpihy3EeqR5Iq8qzS__w" elementId="org.eclipse.jdt.ui.SourceView" ref="_RiCsCRy3EeqR5Iq8qzS__w"/>
@@ -248,19 +258,13 @@
       <tags>categoryTag:Help</tags>
     </sharedElements>
     <sharedElements xsi:type="advanced:Area" xmi:id="_RiCq2Ry3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.editorss" selectedElement="_RiCq2hy3EeqR5Iq8qzS__w">
-      <children xsi:type="basic:PartStack" xmi:id="_RiCq2hy3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.primaryDataStack" selectedElement="_r3a7MB1OEeqv8anophWixw">
+      <children xsi:type="basic:PartStack" xmi:id="_RiCq2hy3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.primaryDataStack" selectedElement="_kYfg8CIvEeqMKNC2X4KzTg">
         <tags>org.eclipse.e4.primaryDataStack</tags>
         <tags>EditorStack</tags>
         <tags>active</tags>
         <tags>noFocus</tags>
-        <children xsi:type="basic:Part" xmi:id="_RiCq2xy3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="RecMonitorWaveform.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;RecMonitorWaveform.java&quot; partName=&quot;RecMonitorWaveform.java&quot; title=&quot;RecMonitorWaveform.java&quot; tooltip=&quot;le4-music/src/RecMonitorWaveform.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/RecMonitorWaveform.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;4323&quot; selectionTopPixel=&quot;955&quot;/>&#xA;&lt;/editor>"/>
-          <tags>Editor</tags>
-          <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
-          <tags>removeOnHide</tags>
-        </children>
         <children xsi:type="basic:Part" xmi:id="_RiCq3By3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="PlotcepstrumCLI.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotcepstrumCLI.java&quot; partName=&quot;PlotcepstrumCLI.java&quot; title=&quot;PlotcepstrumCLI.java&quot; tooltip=&quot;le4-music/src/PlotcepstrumCLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlotcepstrumCLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;7945&quot; selectionTopPixel=&quot;1017&quot;/>&#xA;&lt;/editor>"/>
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotcepstrumCLI.java&quot; partName=&quot;PlotcepstrumCLI.java&quot; title=&quot;PlotcepstrumCLI.java&quot; tooltip=&quot;le4-music/src/PlotcepstrumCLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlotcepstrumCLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;499&quot; selectionTopPixel=&quot;0&quot;/>&#xA;&lt;/editor>"/>
           <tags>Editor</tags>
           <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
           <tags>removeOnHide</tags>
@@ -280,18 +284,6 @@
             <tags>menuContribution:popup</tags>
             <tags>popup:#OverviewRulerContext</tags>
           </menus>
-        </children>
-        <children xsi:type="basic:Part" xmi:id="_RiCq4By3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="PlayMonitorWaveform.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlayMonitorWaveform.java&quot; partName=&quot;PlayMonitorWaveform.java&quot; title=&quot;PlayMonitorWaveform.java&quot; tooltip=&quot;le4-music/src/PlayMonitorWaveform.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlayMonitorWaveform.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;4567&quot; selectionTopPixel=&quot;516&quot;/>&#xA;&lt;/editor>"/>
-          <tags>Editor</tags>
-          <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
-          <tags>removeOnHide</tags>
-        </children>
-        <children xsi:type="basic:Part" xmi:id="_RiCq4Ry3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="PlayMonitorSpectrogram.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlayMonitorSpectrogram.java&quot; partName=&quot;PlayMonitorSpectrogram.java&quot; title=&quot;PlayMonitorSpectrogram.java&quot; tooltip=&quot;le4-music/src/PlayMonitorSpectrogram.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlayMonitorSpectrogram.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;1215&quot; selectionTopPixel=&quot;710&quot;/>&#xA;&lt;/editor>"/>
-          <tags>Editor</tags>
-          <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
-          <tags>removeOnHide</tags>
         </children>
         <children xsi:type="basic:Part" xmi:id="_RiCq4hy3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="PlotSpectrumCLI.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
           <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotSpectrumCLI.java&quot; partName=&quot;PlotSpectrumCLI.java&quot; title=&quot;PlotSpectrumCLI.java&quot; tooltip=&quot;le4-music/src/PlotSpectrumCLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlotSpectrumCLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;24&quot; selectionOffset=&quot;4602&quot; selectionTopPixel=&quot;1401&quot;/>&#xA;&lt;/editor>"/>
@@ -316,7 +308,7 @@
           </menus>
         </children>
         <children xsi:type="basic:Part" xmi:id="_RiCq5hy3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="PlotSpectrogramCLI.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotSpectrogramCLI.java&quot; partName=&quot;PlotSpectrogramCLI.java&quot; title=&quot;PlotSpectrogramCLI.java&quot; tooltip=&quot;le4-music/src/PlotSpectrogramCLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlotSpectrogramCLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;4794&quot; selectionTopPixel=&quot;2096&quot;/>&#xA;&lt;/editor>"/>
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotSpectrogramCLI.java&quot; partName=&quot;PlotSpectrogramCLI.java&quot; title=&quot;PlotSpectrogramCLI.java&quot; tooltip=&quot;le4-music/src/PlotSpectrogramCLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlotSpectrogramCLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;117&quot; selectionOffset=&quot;4118&quot; selectionTopPixel=&quot;629&quot;/>&#xA;&lt;/editor>"/>
           <tags>Editor</tags>
           <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
           <tags>removeOnHide</tags>
@@ -360,7 +352,7 @@
           </menus>
         </children>
         <children xsi:type="basic:Part" xmi:id="_RiCq7hy3EeqR5Iq8qzS__w" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="Plotf0CLI.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;Plotf0CLI.java&quot; partName=&quot;Plotf0CLI.java&quot; title=&quot;Plotf0CLI.java&quot; tooltip=&quot;le4-music/src/Plotf0CLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/Plotf0CLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;6653&quot; selectionTopPixel=&quot;1180&quot;/>&#xA;&lt;/editor>"/>
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;Plotf0CLI.java&quot; partName=&quot;Plotf0CLI.java&quot; title=&quot;Plotf0CLI.java&quot; tooltip=&quot;le4-music/src/Plotf0CLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/Plotf0CLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;6275&quot; selectionTopPixel=&quot;1486&quot;/>&#xA;&lt;/editor>"/>
           <tags>Editor</tags>
           <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
           <tags>removeOnHide</tags>
@@ -463,13 +455,19 @@
           <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
           <tags>removeOnHide</tags>
         </children>
-        <children xsi:type="basic:Part" xmi:id="_r3a7MB1OEeqv8anophWixw" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="PlotYesNoCLI.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
-          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotYesNoCLI.java&quot; partName=&quot;PlotYesNoCLI.java&quot; title=&quot;PlotYesNoCLI.java&quot; tooltip=&quot;le4-music/src/PlotYesNoCLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlotYesNoCLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;6337&quot; selectionTopPixel=&quot;1123&quot;/>&#xA;&lt;/editor>"/>
+        <children xsi:type="basic:Part" xmi:id="_kYfg8CIvEeqMKNC2X4KzTg" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="PlotaiueoCLI.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;PlotaiueoCLI.java&quot; partName=&quot;PlotaiueoCLI.java&quot; title=&quot;PlotaiueoCLI.java&quot; tooltip=&quot;le4-music/src/PlotaiueoCLI.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/PlotaiueoCLI.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;9797&quot; selectionTopPixel=&quot;3588&quot;/>&#xA;&lt;/editor>"/>
           <tags>Editor</tags>
           <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
           <tags>removeOnHide</tags>
           <tags>active</tags>
           <tags>activeOnClose</tags>
+        </children>
+        <children xsi:type="basic:Part" xmi:id="_Mcr9MCIxEeqMKNC2X4KzTg" elementId="org.eclipse.e4.ui.compatibility.editor" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor" label="Le4MusicUtils.java" iconURI="platform:/plugin/org.eclipse.jdt.ui/icons/full/obj16/jcu_obj.png" closeable="true">
+          <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;editor id=&quot;org.eclipse.jdt.ui.CompilationUnitEditor&quot; name=&quot;Le4MusicUtils.java&quot; partName=&quot;Le4MusicUtils.java&quot; title=&quot;Le4MusicUtils.java&quot; tooltip=&quot;le4-music/src/Le4MusicUtils.java&quot;>&#xA;&lt;input factoryID=&quot;org.eclipse.ui.part.FileEditorInputFactory&quot; path=&quot;/le4-music/src/Le4MusicUtils.java&quot;/>&#xA;&lt;editorState selectionHorizontalPixel=&quot;0&quot; selectionLength=&quot;0&quot; selectionOffset=&quot;0&quot; selectionTopPixel=&quot;6486&quot;/>&#xA;&lt;/editor>"/>
+          <tags>Editor</tags>
+          <tags>org.eclipse.jdt.ui.CompilationUnitEditor</tags>
+          <tags>removeOnHide</tags>
         </children>
       </children>
     </sharedElements>
@@ -542,7 +540,7 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_RiCrDRy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.views.ProblemView" contributionURI="bundleclass://org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView" label="Problems" iconURI="platform:/plugin/org.eclipse.ui.ide/icons/full/eview16/problems_view.png" tooltip="" closeable="true">
       <persistedState key="originalCompatibilityViewClass" value="org.eclipse.ui.internal.views.markers.ProblemsView"/>
       <persistedState key="originalCompatibilityViewBundle" value="org.eclipse.ui.ide"/>
-      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;view PRIMARY_SORT_FIELD=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot; categoryGroup=&quot;org.eclipse.ui.ide.severity&quot; markerContentGenerator=&quot;org.eclipse.ui.ide.problemsGenerator&quot; partName=&quot;Problems&quot;>&#xA;&lt;expanded>&#xA;&lt;category IMemento.internal.id=&quot;Errors&quot;/>&#xA;&lt;/expanded>&#xA;&lt;columnWidths org.eclipse.ui.ide.locationField=&quot;105&quot; org.eclipse.ui.ide.markerType=&quot;293&quot; org.eclipse.ui.ide.pathField=&quot;140&quot; org.eclipse.ui.ide.resourceField=&quot;105&quot; org.eclipse.ui.ide.severityAndDescriptionField=&quot;350&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.resourceField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.pathField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.locationField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.markerType&quot;/>&#xA;&lt;/view>"/>
+      <persistedState key="memento" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;view PRIMARY_SORT_FIELD=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot; categoryGroup=&quot;org.eclipse.ui.ide.severity&quot; markerContentGenerator=&quot;org.eclipse.ui.ide.problemsGenerator&quot; partName=&quot;Problems&quot;>&#xA;&lt;expanded>&#xA;&lt;category IMemento.internal.id=&quot;Errors&quot;/>&#xA;&lt;category IMemento.internal.id=&quot;Warnings&quot;/>&#xA;&lt;/expanded>&#xA;&lt;columnWidths org.eclipse.ui.ide.locationField=&quot;105&quot; org.eclipse.ui.ide.markerType=&quot;293&quot; org.eclipse.ui.ide.pathField=&quot;140&quot; org.eclipse.ui.ide.resourceField=&quot;105&quot; org.eclipse.ui.ide.severityAndDescriptionField=&quot;350&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.severityAndDescriptionField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.resourceField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.pathField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.locationField&quot;/>&#xA;&lt;visible IMemento.internal.id=&quot;org.eclipse.ui.ide.markerType&quot;/>&#xA;&lt;/view>"/>
       <tags>View</tags>
       <tags>categoryTag:General</tags>
       <menus xmi:id="_RiCrDhy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.views.ProblemView">
@@ -747,7 +745,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_RiCsEhy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.workbench.file">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_91Yx8CFGEeqw4qIgmN6NQg" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="Print" command="_RiFGshy3EeqR5Iq8qzS__w"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_uef74CIUEeqMKNC2X4KzTg" elementId="print" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/print_edit.png" tooltip="Print" command="_RiFGshy3EeqR5Iq8qzS__w"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_RiCsHxy3EeqR5Iq8qzS__w" elementId="additions" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -780,7 +778,7 @@
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_RiCscxy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.workbench.navigate">
         <tags>Draggable</tags>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_91anIyFGEeqw4qIgmN6NQg" elementId="org.eclipse.ui.window.pinEditor" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="Pin Editor" type="Check" command="_RiFGVRy3EeqR5Iq8qzS__w"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_ueiYIiIUEeqMKNC2X4KzTg" elementId="org.eclipse.ui.window.pinEditor" visible="false" iconURI="platform:/plugin/org.eclipse.ui/icons/full/etool16/pin_editor.png" tooltip="Pin Editor" type="Check" command="_RiFGVRy3EeqR5Iq8qzS__w"/>
       </children>
       <children xsi:type="menu:ToolBar" xmi:id="_RiDQmRy3EeqR5Iq8qzS__w" elementId="group.editor" toBeRendered="false">
         <tags>toolbarSeparator</tags>
@@ -825,7 +823,7 @@
         <tags>Draggable</tags>
       </children>
     </trimBars>
-    <trimBars xmi:id="_RiDQuRy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.trim.vertical2" toBeRendered="false" side="Right">
+    <trimBars xmi:id="_RiDQuRy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.trim.vertical2" side="Right">
       <children xsi:type="menu:ToolControl" xmi:id="_RiDQuhy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.ide.perspectivestack(minimized)" toBeRendered="false" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
         <tags>TrimStack</tags>
         <tags>Draggable</tags>
@@ -842,15 +840,19 @@
         <tags>TrimStack</tags>
         <tags>Draggable</tags>
       </children>
-      <children xsi:type="menu:ToolControl" xmi:id="_RiDQvhy3EeqR5Iq8qzS__w" elementId="org.eclipse.mylyn.tasks.ui.views.tasksMStack(IDEWindow).(org.eclipse.jdt.ui.JavaPerspective)" toBeRendered="false" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+      <children xsi:type="menu:ToolControl" xmi:id="_RiDQvhy3EeqR5Iq8qzS__w" elementId="org.eclipse.mylyn.tasks.ui.views.tasksMStack(IDEWindow).(org.eclipse.jdt.ui.JavaPerspective)" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
         <tags>TrimStack</tags>
         <tags>Draggable</tags>
       </children>
-      <children xsi:type="menu:ToolControl" xmi:id="_RiDQvxy3EeqR5Iq8qzS__w" elementId="right(IDEWindow).(org.eclipse.jdt.ui.JavaPerspective)" toBeRendered="false" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+      <children xsi:type="menu:ToolControl" xmi:id="_RiDQvxy3EeqR5Iq8qzS__w" elementId="right(IDEWindow).(org.eclipse.jdt.ui.JavaPerspective)" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
         <tags>TrimStack</tags>
         <tags>Draggable</tags>
       </children>
-      <children xsi:type="menu:ToolControl" xmi:id="_RiDQwBy3EeqR5Iq8qzS__w" elementId="bottom(IDEWindow).(org.eclipse.jdt.ui.JavaPerspective)" toBeRendered="false" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+      <children xsi:type="menu:ToolControl" xmi:id="_RiDQwBy3EeqR5Iq8qzS__w" elementId="bottom(IDEWindow).(org.eclipse.jdt.ui.JavaPerspective)" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
+        <tags>TrimStack</tags>
+        <tags>Draggable</tags>
+      </children>
+      <children xsi:type="menu:ToolControl" xmi:id="_P7AwICIvEeqMKNC2X4KzTg" elementId="PartStack@31d9983d(IDEWindow).(org.eclipse.jdt.ui.JavaPerspective)" toBeRendered="false" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack">
         <tags>TrimStack</tags>
         <tags>Draggable</tags>
       </children>
@@ -3462,7 +3464,7 @@
   <addons xmi:id="_RiFIKxy3EeqR5Iq8qzS__w" elementId="MinMax Addon" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"/>
   <addons xmi:id="_RiFILBy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.workbench.addon.0" contributorURI="platform:/plugin/org.eclipse.platform" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
   <addons xmi:id="_RiFILRy3EeqR5Iq8qzS__w" elementId="SplitterAddon" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitterAddon"/>
-  <addons xmi:id="_IYS0IKimEeS11vbz3f9ezw" elementId="org.eclipse.ui.ide.addon.0" contributorURI="platform:/plugin/org.eclipse.ui.ide" contributionURI="bundleclass://org.eclipse.ui.ide/org.eclipse.ui.internal.ide.addons.SaveAllDirtyPartsAddon"/>
+  <addons xmi:id="_thjLcSIUEeqMKNC2X4KzTg" elementId="org.eclipse.ui.ide.addon.0" contributionURI="bundleclass://org.eclipse.ui.ide/org.eclipse.ui.internal.ide.addons.SaveAllDirtyPartsAddon"/>
   <addons xmi:id="_RiFILxy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.ide.application.addon.0" contributorURI="platform:/plugin/org.eclipse.ui.ide.application" contributionURI="bundleclass://org.eclipse.ui.ide.application/org.eclipse.ui.internal.ide.application.addons.ModelCleanupAddon"/>
   <categories xmi:id="_RiFIMBy3EeqR5Iq8qzS__w" elementId="org.eclipse.ui.category.edit" name="Edit"/>
   <categories xmi:id="_RiFIMRy3EeqR5Iq8qzS__w" elementId="org.eclipse.mylyn.wikitext.ui.editor.category" name="WikiText Markup Editing Commands" description="commands for editing lightweight markup"/>
