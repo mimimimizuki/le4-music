@@ -205,8 +205,6 @@ public final class PlotaiueoCLI extends Application {
          
          Complex[][] cepstrum = new Complex[times.length][];
          final double[][] ceps = new double[times.length][];
-         
-         final double[]  L = new double[5];
          for(int i = 0; i< times.length; i++) {
          	int fftSize_c = 1 << Le4MusicUtils.nextPow2(specLog[i].length);
              int fftSize2_c = (fftSize_c >> 1) + 1;
@@ -216,29 +214,12 @@ public final class PlotaiueoCLI extends Application {
          	for(int j = 0; j < 13; j++) {
          		ceps[i][j] = cepstrum[i][j].getReal();
          	}//これを１３こだけ使う予定
-         	
+         	int sum = 0;
+         	int aiueo = 0;
+         	for(int d = 0; d < 13; d++) {
+         		sum += Math.log(s_power[aiueo][d]) + (ceps[i][d] - average[aiueo][d]) * (ceps[i][d] - average[aiueo][d]) / (2 * s_power[aiueo][d] * s_power[aiueo][d]);
+         	}
          }
-         for(int i = 0; i < times.length; i++) {
-        	int sum = 0;
-          	for(int aiueo = 0; aiueo < 5; aiueo++) {
-          		for(int d = 0; d < 13; d++) {
-              		sum += Math.log(s_power[aiueo][d]) + (ceps[i][d] - average[aiueo][d]) * (ceps[i][d] - average[aiueo][d]) / (2 * s_power[aiueo][d] * s_power[aiueo][d]);
-              	}
-              	L[aiueo] = sum;
-          	}
-          	int[] index = new int[times.length];
-            for(int s = 0; s <5; s ++) {
-           	 double max = L[0];
-           	 int ind = 0;
-           	 if(L[s] > max) {
-           		 max = L[s];
-           		 ind = s;
-           	 }
-            }
-            index[s] = ind;
-         }
-         
-         
          
          
         		

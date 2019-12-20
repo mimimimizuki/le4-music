@@ -8,6 +8,6 @@
 </listAttribute>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="PlotaiueoCLI"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="output2.wav"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="a.wav&#10;i.wav&#10;u.wav&#10;e.wav&#10;o.wav"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="le4-music"/>
 </launchConfiguration>

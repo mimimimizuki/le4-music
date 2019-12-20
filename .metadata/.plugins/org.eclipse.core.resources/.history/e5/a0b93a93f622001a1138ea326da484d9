@@ -80,16 +80,13 @@ public final class PlotaiueoCLI extends Application {
             Platform.exit();
             return;
         }
-        final File[] wavFile = new File[5];
+        final File[] wavFile = new File[6];
         wavFile[0] = new File(pargs[0]);
         wavFile[1] = new File(pargs[1]);
         wavFile[2] = new File(pargs[2]);
         wavFile[3] = new File(pargs[3]);
         wavFile[4] = new File(pargs[4]);
-//        wavFile[5] = new File(pargs[5]);
-        
-        double[][] average = new double[5][13];//最尤推定した結果の平均
-        double[][] s_power  = new double[5][13];//最尤推定した結果の分散
+        wavFile[5] = new File(pargs[5]);
         
         for(int v = 0; v < 5; v++) {
         	final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile[v]);
@@ -144,6 +141,7 @@ public final class PlotaiueoCLI extends Application {
              	}//これを１３こだけ使う予定
              }
              System.out.print("average");
+             double[][] average = new double[5][13];//最尤推定した結果の平均
              for(int i = 0; i < 13; i++) {
              	int sum = 0;
              	for(int j = 0; j < times.length; j++){
@@ -153,97 +151,16 @@ public final class PlotaiueoCLI extends Application {
              	System.out.println(average[v][i]);
              }
              System.out.println("bunsan");
+             double[] s_power  = new double[13];//最尤推定した結果の分散
              for(int i = 0; i < 13; i ++) {
              	int sum = 0;
              	for(int j = 0; j < times.length; j++) {
              		sum += (average[v][i] - ceps[j][i]) * (average[v][i] - ceps[j][i]);
              	}
-             	s_power[v][i] = sum / 13;
-             	System.out.println(s_power[v][i]);
+             	s_power[i] = sum / 13;
+             	System.out.println(s_power[i]);
              }
         }
-        
-        final File wavFile_tes = new File(pargs[5]);
-        final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile_tes);
-        final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
-        final AudioFormat format = stream.getFormat();
-        final double sampleRate= format.getSampleRate();
-        final double nyquist = sampleRate * 0.5;
-        stream.close();	
-        
-        /* fftSize = 2ˆp >= waveform.length を満たすfftSize を求める
-         * 2ˆp はシフト演算で求める*/
-         /* 窓関数とFFTのサンプル数 */
-         final double frameDuration = Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
-                 .orElse(Le4MusicUtils.frameDuration);
-         final int frameSize = (int) Math.round(frameDuration * sampleRate);
-         final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
-         final int fftSize2 = (fftSize >> 1) + 1;
-         /* 信号の長さをfftSize に伸ばし， 長さが足りない部分は0 で埋める．
-         * 振幅を信号長で正規化する． */
-         /* シフトのサンプル数 */
-         final double shiftDuration = Optional.ofNullable(cmd.getOptionValue("shift")).map(Double::parseDouble)
-                 .orElse(Le4MusicUtils.frameDuration / 8);
-         final int shiftSize = (int) Math.round(shiftDuration * sampleRate);
-         /* 窓関数を求め， それを正規化する */
-         final double[] window = MathArrays.normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(frameSize), fftSize),
-                 1.0);
-         /* 短時間フーリエ変換本体 */
-         final Stream<Complex[]> spectrogram = Le4MusicUtils.sliding(waveform, window, shiftSize)
-                 .map(frame -> Le4MusicUtils.rfft(frame));
-
-         /* 複素スペクトログラムを対数振幅スペクトログラムに */
-         double[][] specLog = spectrogram.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
-                 .toArray(n -> new double[n][]);
-         
-         /* 参考： フレーム数と各フレーム先頭位置の時刻 */
-         final double[] times = IntStream.range(0, specLog.length).mapToDouble(i -> i * shiftDuration).toArray();
-         
-         /* 参考： 各フーリエ変換係数に対応する周波数 */
-         final double[] freqs = IntStream.range(0, fftSize2).mapToDouble(i -> i * sampleRate / fftSize).toArray();
-         System.out.println(times.length);
-         
-         Complex[][] cepstrum = new Complex[times.length][];
-         final double[][] ceps = new double[times.length][];
-         
-         final double[]  L = new double[5];
-         for(int i = 0; i< times.length; i++) {
-         	int fftSize_c = 1 << Le4MusicUtils.nextPow2(specLog[i].length);
-             int fftSize2_c = (fftSize_c >> 1) + 1;
-             double[] src = Arrays.stream(Arrays.copyOf(specLog[i], fftSize_c)).toArray();
-         	cepstrum[i] = Le4MusicUtils.fft(src);
-         	ceps[i] = new double[13];
-         	for(int j = 0; j < 13; j++) {
-         		ceps[i][j] = cepstrum[i][j].getReal();
-         	}//これを１３こだけ使う予定
-         	
-         }
-         for(int i = 0; i < times.length; i++) {
-        	int sum = 0;
-          	for(int aiueo = 0; aiueo < 5; aiueo++) {
-          		for(int d = 0; d < 13; d++) {
-              		sum += Math.log(s_power[aiueo][d]) + (ceps[i][d] - average[aiueo][d]) * (ceps[i][d] - average[aiueo][d]) / (2 * s_power[aiueo][d] * s_power[aiueo][d]);
-              	}
-              	L[aiueo] = sum;
-          	}
-          	int[] index = new int[times.length];
-            for(int s = 0; s <5; s ++) {
-           	 double max = L[0];
-           	 int ind = 0;
-           	 if(L[s] > max) {
-           		 max = L[s];
-           		 ind = s;
-           	 }
-            }
-            index[s] = ind;
-         }
-         
-         
-         
-         
-        		
-    
-        
     }
 
 }
