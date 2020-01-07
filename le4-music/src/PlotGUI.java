@@ -1,48 +1,40 @@
-import java.lang.invoke.MethodHandles;
 import java.io.File;
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import java.util.stream.Collectors;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.imageio.ImageIO;
-
-import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.stage.Stage;
-import javafx.scene.layout.GridPane;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
-import javafx.scene.chart.XYChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.image.WritableImage;
-import javafx.collections.ObservableList;
-import javafx.collections.FXCollections;
-import javafx.embed.swing.SwingFXUtils;
-
+import javafx.stage.Stage;
+import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.HelpFormatter;
-
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.commons.math3.complex.Complex;
 import org.apache.commons.math3.util.MathArrays;
 
-import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
-import jp.ac.kyoto_u.kuis.le4music.CheckAudioSystem;
-import jp.ac.kyoto_u.kuis.le4music.LineChartWithSpectrogram;
-import jp.ac.kyoto_u.kuis.le4music.AudioFrameProvider;
-import jp.ac.kyoto_u.kuis.le4music.Player;
-import jp.ac.kyoto_u.kuis.le4music.Player.Builder;
 
-import java.io.IOException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import org.apache.commons.cli.ParseException;
 
-public final class PlotaiueoCLI extends Application {
+
+
+
+
+public final class PlotGUI extends Application {
 
         private static final Options options = new Options();
         private static final String helpMessage = MethodHandles.lookup().lookupClass().getName()
@@ -146,12 +138,14 @@ public final class PlotaiueoCLI extends Application {
                                         ceps[i][j] = cepstrum[i][j].getReal();
                                 } // これを１３こだけ使う予定
                         }
+                        System.out.println("average");
                         for (int i = 0; i < 13; i++) {
                                 double sum = 0;
                                 for (int j = 0; j < times.length; j++) {
                                         sum += ceps[j][i];
                                 }
                                 average[v][i] = sum / times.length;
+                                System.out.println(average[v][i]);
                         }
                         for (int i = 0; i < 13; i++) {
                                 double sum = 0;
@@ -190,25 +184,20 @@ public final class PlotaiueoCLI extends Application {
                 /* 窓関数を求め， それを正規化する */
                 final double[] window = MathArrays
                                 .normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(frameSize), fftSize), 1.0);
-                /* 短時間フーリエ変換本体 (for aiueo) */
+                /* 短時間フーリエ変換本体 */
                 final Stream<Complex[]> spectrogram = Le4MusicUtils.sliding(waveform, window, shiftSize)
                                 .map(frame -> Le4MusicUtils.rfft(frame));
 
-                /* 複素スペクトログラムを振幅スペクトログラムに (for aiueo) */
+                /* 複素スペクトログラムを対数振幅スペクトログラムに */
                 double[][] specLog = spectrogram.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
-                                .toArray(n -> new double[n][]);
-
-                /* 短時間フーリエ変換本体 (for spectrogram) */
-                final Stream<Complex[]> spectrogram1 = Le4MusicUtils.sliding(waveform, window, shiftSize)
-                                .map(frame -> Le4MusicUtils.rfft(frame));
-
-                /* 複素スペクトログラムを振幅スペクトログラムに (for spectrogram) */
-                double[][] specLog1 = spectrogram1
-                                .map(sp -> Arrays.stream(sp).mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray())
                                 .toArray(n -> new double[n][]);
 
                 /* 参考： フレーム数と各フレーム先頭位置の時刻 */
                 final double[] times = IntStream.range(0, specLog.length).mapToDouble(i -> i * shiftDuration).toArray();
+
+                /* 参考： 各フーリエ変換係数に対応する周波数 */
+                final double[] freqs = IntStream.range(0, fftSize2).mapToDouble(i -> i * sampleRate / fftSize)
+                                .toArray();
 
                 Complex[][] cepstrum = new Complex[times.length][];
                 final double[][] ceps = new double[times.length][13];
@@ -240,99 +229,39 @@ public final class PlotaiueoCLI extends Application {
                         System.out.println(index[i]);
 
                 }
-                // (for f0)
-                double[] f0 = new double[times.length];
-                double[] new_freq = new double[times.length];
-                final double lowerf0 = Le4MusicUtils.f0LowerBound;
-                final double upperf0 = 400;
-
-                for (int i = 0; i < times.length; i++) {
-                        // specLog[i][j]が振幅
-                        for (int j = 0; j < specLog[i].length; j++) {
-                                if (j * sampleRate / fftSize < upperf0 && j * sampleRate / fftSize > lowerf0
-                                                && specLog[i][j] > f0[i]) {
-                                        f0[i] = specLog[i][j];
-                                        new_freq[i] = j;
-                                }
-                        }
-                }
-
-                /* データ系列を作成 (for aiueo) */
+                /* データ系列を作成 */
                 final ObservableList<XYChart.Data<Number, Number>> data = IntStream.range(0, index.length)
                                 .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, index[i]))
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
-                /* データ系列を作成 */
-                final ObservableList<XYChart.Data<Number, Number>> data1 = IntStream.range(0, f0.length)
-                                .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration,
-                                                new_freq[i] * sampleRate / fftSize))
-                                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+                /* データ系列に名前をつける */
+                final XYChart.Series<Number, Number> series = new XYChart.Series<>("Waveform", data);
 
-                /* データ系列に名前をつける (for aiueo) */
-                final XYChart.Series<Number, Number> series = new XYChart.Series<>("aiueo", data);
-
-                /* データ系列に名前をつける (for f0) */
-                final XYChart.Series<Number, Number> series1 = new XYChart.Series<>("f0", data1);
-
-                /* X 軸を作成 (for aiueo) */
+                /* X 軸を作成 */
                 final double duration = (waveform.length - 1) / sampleRate;
                 final NumberAxis xAxis = new NumberAxis(/* axisLabel = */ "Time (seconds)", /* lowerBound = */ 0.0,
                                 /* upperBound = */ duration, /* tickUnit = */ Le4MusicUtils.autoTickUnit(duration));
                 xAxis.setAnimated(false);
 
-                /* X 軸を作成 (for spectrogram) */
-                final NumberAxis xAxis1 = new NumberAxis("Time (seconds)", 0.0, duration,
-                                Le4MusicUtils.autoTickUnit(duration));
-                xAxis.setAnimated(false);
-
-                /* X 軸を作成 (for f0) */
-                final NumberAxis xAxis2 = new NumberAxis("Time (seconds)", 0.0, duration,
-                                Le4MusicUtils.autoTickUnit(duration));
-                xAxis.setAnimated(false);
-
-                /* Y 軸を作成 (for aiueo) */
+                /* Y 軸を作成 */
                 final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "aiueo", /* lowerBound = */ 0,
-                                /* upperBound = */ 5, /* tickUnit = */ 5000);
+                                /* upperBound = */ 5, /* tickUnit = */ 5);
+                // yAxis.tickLabelsVisibleProperty(true);
                 yAxis.setAnimated(false);
 
-                /* Y 軸を作成 (for spectrogram) */
-                final NumberAxis yAxis1 = new NumberAxis("Frequency (Hz)", 0.0, 300, Le4MusicUtils.autoTickUnit(300));
-                yAxis.setAnimated(false);
-
-                /* Y 軸を作成 (for f0) */
-                final NumberAxis yAxis2 = new NumberAxis("Frequency (Hz)", 0.0, 300, Le4MusicUtils.autoTickUnit(300));
-                yAxis.setAnimated(false);
-
-                /* チャートを作成 (for aiueo) */
+                /* チャートを作成 */
                 final LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
                 chart.setTitle("aiueo");
                 chart.setCreateSymbols(false);
                 chart.setLegendVisible(false);
                 chart.getData().add(series);
 
-                /* チャートを作成 (for spectrogram) */
-                final LineChartWithSpectrogram<Number, Number> chart1 = new LineChartWithSpectrogram<>(xAxis1, yAxis1);
-                chart1.setParameters(specLog1.length, fftSize2, nyquist);
-                chart1.setTitle("Spectrogram");
-                Arrays.stream(specLog1).forEach(chart1::addSpecLog);
-                chart1.setCreateSymbols(false);
-                chart1.setLegendVisible(false);
-
-                /* チャートを作成 (for f0) */
-                final LineChartWithSpectrogram<Number, Number> chart2 = new LineChartWithSpectrogram<>(xAxis2, yAxis2);
-                chart2.setParameters(specLog1.length, fftSize2, nyquist);
-                Arrays.stream(specLog1).forEach(chart2::addSpecLog);
-                chart2.setTitle("f0");
-                chart2.setStyle(".chart-series-line-fx-stroke: white;");
-                chart2.setCreateSymbols(false);
-                chart2.setLegendVisible(false);
-                chart2.getData().add(series1);
-
                 GridPane gridPane = new GridPane();
-                gridPane.setMinSize(400, 400);
-                gridPane.add(chart, 0, 0); // aiueo
-                gridPane.add(chart1, 410, 0); // spectrogram
-                gridPane.add(chart2, 205, 420); // f0
+
+                gridPane.setMinSize(400, 400); 
+
+                gridPane.add(chart, 0, 0);
+
 
                 /* グラフ描画 */
                 final Scene scene = new Scene(gridPane);
@@ -355,16 +284,6 @@ public final class PlotaiueoCLI extends Application {
                                 e.printStackTrace();
                         }
                 });
-                CheckAudioSystem.main(args);
-                Player player = Player.builder(wavFile_tes).mixer(AudioSystem.getMixerInfo()[mixerIndex]).daemon()
-                                .build();
-                player.addAudioFrameListener((frame, position) -> {
-                        final double rms = Arrays.stream(frame).map(x -> x * x).average().orElse(0.0);
-                        final double logRms = 20.0 * Math.log10(rms);
-                        final double posInSec = position / player.getSampleRate();
-                        System.out.printf("Position %d (%.3f sec), RMS %f dB%n", position, posInSec, logRms);
-                });
-                player.start();
         }
 
 }

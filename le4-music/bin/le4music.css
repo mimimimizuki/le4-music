@@ -5,7 +5,7 @@
 .chart-series-line {
   -fx-stroke-width: 2px;
   -fx-effect: null;
-  -fx-stroke: white;
+  /*-fx-stroke: white;*/
 }
 
 .on-spectrogram .chart-series-line {
