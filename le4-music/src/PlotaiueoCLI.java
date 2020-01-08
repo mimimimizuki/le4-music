@@ -5,10 +5,14 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.LineUnavailableException;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -37,6 +41,7 @@ import jp.ac.kyoto_u.kuis.le4music.LineChartWithSpectrogram;
 import jp.ac.kyoto_u.kuis.le4music.AudioFrameProvider;
 import jp.ac.kyoto_u.kuis.le4music.Player;
 import jp.ac.kyoto_u.kuis.le4music.Player.Builder;
+import static jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils.verbose;
 
 import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -54,6 +59,10 @@ public final class PlotaiueoCLI extends Application {
                 options.addOption("o", "outfile", true,
                                 "Output image file (Default: " + MethodHandles.lookup().lookupClass().getSimpleName()
                                                 + "." + Le4MusicUtils.outputImageExt + ")");
+                options.addOption("m", "mixer", true, "Index of Mixer object that supplies a SourceDataLine object. "
+                                + "To check the proper index, use CheckAudioSystem");
+                options.addOption("i", "interval", true, "Frame notification interval [seconds] " + "(Default: "
+                                + Le4MusicUtils.frameInterval + ")");
                 options.addOption(null, "amp-lo", true, "Lower bound of amplitude [dB] (Default: "
                                 + Le4MusicUtils.spectrumAmplitudeLowerBound + ")");
                 options.addOption(null, "amp-up", true, "Upper bound of amplitude [dB] (Default: "
@@ -64,7 +73,7 @@ public final class PlotaiueoCLI extends Application {
 
         @Override
         public final void start(final Stage primaryStage)
-                        throws IOException, UnsupportedAudioFileException, ParseException {
+                        throws IOException, UnsupportedAudioFileException, LineUnavailableException, ParseException {
                 /* コマンドライン引数処理 */
                 final String[] args = getParameters().getRaw().toArray(new String[0]);
                 final CommandLine cmd = new DefaultParser().parse(options, args);
@@ -171,6 +180,11 @@ public final class PlotaiueoCLI extends Application {
                 final double nyquist = sampleRate * 0.5;
                 stream.close();
 
+                final double interval = Optional.ofNullable(cmd.getOptionValue("interval")).map(Double::parseDouble)
+                                .orElse(Le4MusicUtils.frameInterval);
+
+                final ExecutorService executor = Executors.newSingleThreadExecutor();
+
                 /*
                  * fftSize = 2ˆp >= waveform.length を満たすfftSize を求める 2ˆp はシフト演算で求める
                  */
@@ -262,13 +276,13 @@ public final class PlotaiueoCLI extends Application {
                                 .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, index[i]))
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
-                /* データ系列を作成 */
+                /* データ系列を作成 (for f0) */
                 final ObservableList<XYChart.Data<Number, Number>> data1 = IntStream.range(0, f0.length)
                                 .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration,
                                                 new_freq[i] * sampleRate / fftSize))
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
-                /* データ系列に名前をつける (for aiueo) */
+                /* データ系列に名前をつける (for aiueo) with animation */
                 final XYChart.Series<Number, Number> series = new XYChart.Series<>("aiueo", data);
 
                 /* データ系列に名前をつける (for f0) */
@@ -296,11 +310,11 @@ public final class PlotaiueoCLI extends Application {
                 yAxis.setAnimated(false);
 
                 /* Y 軸を作成 (for spectrogram) */
-                final NumberAxis yAxis1 = new NumberAxis("Frequency (Hz)", 0.0, 300, Le4MusicUtils.autoTickUnit(300));
+                final NumberAxis yAxis1 = new NumberAxis("Frequency (Hz)", 0.0, 500, Le4MusicUtils.autoTickUnit(500));
                 yAxis.setAnimated(false);
 
                 /* Y 軸を作成 (for f0) */
-                final NumberAxis yAxis2 = new NumberAxis("Frequency (Hz)", 0.0, 300, Le4MusicUtils.autoTickUnit(300));
+                final NumberAxis yAxis2 = new NumberAxis("Frequency (Hz)", 0.0, 500, Le4MusicUtils.autoTickUnit(500));
                 yAxis.setAnimated(false);
 
                 /* チャートを作成 (for aiueo) */
@@ -323,7 +337,6 @@ public final class PlotaiueoCLI extends Application {
                 chart2.setParameters(specLog1.length, fftSize2, nyquist);
                 Arrays.stream(specLog1).forEach(chart2::addSpecLog);
                 chart2.setTitle("f0");
-                chart2.setStyle(".chart-series-line-fx-stroke: white;");
                 chart2.setCreateSymbols(false);
                 chart2.setLegendVisible(false);
                 chart2.getData().add(series1);
@@ -331,8 +344,8 @@ public final class PlotaiueoCLI extends Application {
                 GridPane gridPane = new GridPane();
                 gridPane.setMinSize(400, 400);
                 gridPane.add(chart, 0, 0); // aiueo
-                gridPane.add(chart1, 410, 0); // spectrogram
-                gridPane.add(chart2, 205, 420); // f0
+                gridPane.add(chart1, 1, 0); // spectrogram
+                gridPane.add(chart2, 2, 1); // f0
 
                 /* グラフ描画 */
                 final Scene scene = new Scene(gridPane);
@@ -355,16 +368,29 @@ public final class PlotaiueoCLI extends Application {
                                 e.printStackTrace();
                         }
                 });
-                CheckAudioSystem.main(args);
-                Player player = Player.builder(wavFile_tes).mixer(AudioSystem.getMixerInfo()[mixerIndex]).daemon()
-                                .build();
-                player.addAudioFrameListener((frame, position) -> {
-                        final double rms = Arrays.stream(frame).map(x -> x * x).average().orElse(0.0);
-                        final double logRms = 20.0 * Math.log10(rms);
-                        final double posInSec = position / player.getSampleRate();
-                        System.out.printf("Position %d (%.3f sec), RMS %f dB%n", position, posInSec, logRms);
-                });
-                player.start();
-        }
+                final Player.Builder builder = Player.builder(wavFile_tes);
+                Optional.ofNullable(cmd.getOptionValue("mixer")).map(Integer::parseInt)
+                                .map(i -> AudioSystem.getMixerInfo()[i]).ifPresent(builder::mixer);
+                if (cmd.hasOption("loop"))
+                        builder.loop();
+                Optional.ofNullable(cmd.getOptionValue("buffer")).map(Double::parseDouble)
+                                .ifPresent(builder::bufferDuration);
+                Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
+                                .ifPresent(builder::frameDuration);
+                builder.interval(interval);
+                builder.daemon();
+                final Player player = builder.build();
+                player.addAudioFrameListener((frame, position) -> Platform.runLater(() -> {
+                        /* 最新フレームの波形を描画 */
+                        IntStream.range(0, player.getFrameSize()).forEach(i -> {
+                                data.get(i).setXValue((i + position) / player.getSampleRate());
+                                data.get(i).setYValue(frame[i]);
+                        });
+                        xAxis.setLowerBound(position / player.getSampleRate());
+                        xAxis.setUpperBound((position + player.getFrameSize()) / player.getSampleRate());
+                }));
 
+                /* 録音開始 */
+                Platform.runLater(player::start);
+        }
 }
