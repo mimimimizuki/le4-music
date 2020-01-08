@@ -270,10 +270,16 @@ public final class PlotaiueoCLI extends Application {
                                 }
                         }
                 }
+                double[] time = new double[index.length];
 
                 /* データ系列を作成 (for aiueo) */
                 final ObservableList<XYChart.Data<Number, Number>> data = IntStream.range(0, index.length)
                                 .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, index[i]))
+                                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+                /* データ系列を作成 (for animation line) */
+                final ObservableList<XYChart.Data<Number, Number>> data_a = IntStream.range(0, index.length)
+                                .mapToObj(i -> new XYChart.Data<Number, Number>(0.0, 4))
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
                 /* データ系列を作成 (for f0) */
@@ -284,6 +290,7 @@ public final class PlotaiueoCLI extends Application {
 
                 /* データ系列に名前をつける (for aiueo) with animation */
                 final XYChart.Series<Number, Number> series = new XYChart.Series<>("aiueo", data);
+                final XYChart.Series<Number, Number> series_a = new XYChart.Series<>("line", data_a);
 
                 /* データ系列に名前をつける (for f0) */
                 final XYChart.Series<Number, Number> series1 = new XYChart.Series<>("f0", data1);
@@ -323,6 +330,7 @@ public final class PlotaiueoCLI extends Application {
                 chart.setCreateSymbols(false);
                 chart.setLegendVisible(false);
                 chart.getData().add(series);
+                chart.getData().add(series_a);
 
                 /* チャートを作成 (for spectrogram) */
                 final LineChartWithSpectrogram<Number, Number> chart1 = new LineChartWithSpectrogram<>(xAxis1, yAxis1);
@@ -381,13 +389,15 @@ public final class PlotaiueoCLI extends Application {
                 builder.daemon();
                 final Player player = builder.build();
                 player.addAudioFrameListener((frame, position) -> Platform.runLater(() -> {
+                        final double posInSec = position / player.getSampleRate();
                         /* 最新フレームの波形を描画 */
                         IntStream.range(0, player.getFrameSize()).forEach(i -> {
-                                data.get(i).setXValue((i + position) / player.getSampleRate());
-                                data.get(i).setYValue(frame[i]);
+                                data_a.get(i).setXValue(i + duration);
+                                // data_a.get(i).setYValue(frame[i]);
                         });
-                        xAxis.setLowerBound(position / player.getSampleRate());
-                        xAxis.setUpperBound((position + player.getFrameSize()) / player.getSampleRate());
+                        /* 軸を更新 */
+                        // xAxis.setUpperBound(posInSec);
+                        // xAxis.setLowerBound(posInSec - duration);
                 }));
 
                 /* 録音開始 */

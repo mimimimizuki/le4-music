@@ -102,8 +102,7 @@ public final class PlotcodeCLI extends Application {
                 .map(frame -> Le4MusicUtils.rfft(frame));
 
         /* 複素スペクトログラムを対数振幅スペクトログラムに */
-        final double[][] specLog = spectrogram
-                .map(sp -> Arrays.stream(sp).mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray())
+        final double[][] specLog = spectrogram.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
                 .toArray(n -> new double[n][]);
 
         /* 参考： フレーム数と各フレーム先頭位置の時刻 */
@@ -112,58 +111,66 @@ public final class PlotcodeCLI extends Application {
         /* 参考： 各フーリエ変換係数に対応する周波数 */
         final double[] freqs = IntStream.range(0, fftSize2).mapToDouble(i -> i * sampleRate / fftSize).toArray();
         // C = n mod 12 = 0
-        double[] chroma_v = new double[12];
-        for (int i = 0; i < 12; i++) {
-            chroma_v[i] = 0;
-        }
         double[] harmony_ans = new double[times.length];
         for (int i = 0; i < times.length; i++) {
+            double[] chroma_v = new double[12];
             for (int j = 0; j < specLog[i].length; j++) {
                 double f = j * sampleRate / fftSize;
                 if (f != 0) {
                     int n = (int) Le4MusicUtils.hz2nn(f);
                     int code = n % 12;
-                    chroma_v[code] += Math.abs(specLog[i][j]);
+                    chroma_v[code] += specLog[i][j];
                 }
             }
-            double[] harmony = new double[23];
+            double[] harmony = new double[24];
             // major
-            for (int w = 0; w < 11; w++) {
+            for (int w = 0; w <= 11; w++) {
                 harmony[w] = 1.0 * chroma_v[w] + 0.5 * chroma_v[(w + 4) % 12] + 0.8 * chroma_v[(w + 7) % 12];
-                System.out.println(harmony[w]);
+                System.out.println(harmony[w] + ", " + w + ", " + (w + 4) % 12 + ", " + (w + 7) % 12);
             }
             // minor
-            for (int w = 11; w < 23; w++) {
-                harmony[w] = 1.0 * chroma_v[w - 11] + 0.5 * chroma_v[(w - 11 + 3) % 12]
-                        + 0.8 * chroma_v[(w - 11 + 7) % 12];
-                System.out.println(harmony[w]);
+            for (int w = 12; w <= 23; w++) {
+                harmony[w] = 1.0 * chroma_v[w - 12] + 0.5 * chroma_v[(w - 12 + 3) % 12]
+                        + 0.8 * chroma_v[(w - 12 + 7) % 12];
+                System.out.println(harmony[w] + ", " + (w - 12) + ", " + (w - 12 + 3) % 12 + ", " + (w - 12 + 7) % 12);
             }
 
             harmony_ans[i] = Le4MusicUtils.argmax(harmony);
+
         }
+
+        /* 短時間フーリエ変換本体 */
+        final Stream<Complex[]> spectrogram1 = Le4MusicUtils.sliding(waveform, window, shiftSize)
+                .map(frame -> Le4MusicUtils.rfft(frame));
+
+        /* 複素スペクトログラムを対数振幅スペクトログラムに */
+        final double[][] specLog1 = spectrogram1
+                .map(sp -> Arrays.stream(sp).mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray())
+                .toArray(n -> new double[n][]);
 
         /* データ系列を作成 */
         final ObservableList<XYChart.Data<Number, Number>> data = IntStream.range(0, harmony_ans.length)
-                .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, harmony_ans[i]))
+                .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, 50.0 * harmony_ans[i]))
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         /* データ系列に名前をつける */
         final XYChart.Series<Number, Number> series = new XYChart.Series<>("harmony", data);
 
-        /* X 軸を作成 (for spectrogram) */
-        final double duration = (specLog.length - 1) * shiftDuration;
-
+        /* X 軸を作成 */
+        final double duration = (waveform.length - 1) / sampleRate;
         final NumberAxis xAxis = new NumberAxis(/* axisLabel = */ "Time (seconds)", /* lowerBound = */ 0.0,
                 /* upperBound = */ duration, /* tickUnit = */ Le4MusicUtils.autoTickUnit(duration));
         xAxis.setAnimated(false);
 
         /* Y 軸を作成 */
-        final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "harmony", /* lowerBound = */ 0.0,
-                /* upperBound = */ 24, /* tickUnit = */ Le4MusicUtils.autoTickUnit(24));
+        final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "Frequency (Hz)", /* lowerBound = */ 0.0,
+                /* upperBound = */ 1200, /* tickUnit = */ Le4MusicUtils.autoTickUnit(1200));
         yAxis.setAnimated(false);
 
         /* チャートを作成 */
-        final LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
+        final LineChartWithSpectrogram<Number, Number> chart = new LineChartWithSpectrogram<>(xAxis, yAxis);
+        chart.setParameters(specLog.length, fftSize2, nyquist);
+        Arrays.stream(specLog1).forEach(chart::addSpecLog);
         chart.setTitle("harmony");
         chart.setCreateSymbols(false);
         chart.setLegendVisible(false);
@@ -171,7 +178,7 @@ public final class PlotcodeCLI extends Application {
 
         /* グラフ描画 */
         final Scene scene = new Scene(chart, 800, 600);
-        scene.getStylesheets().add("src/le4music.css");
+        scene.getStylesheets().add("le4music.css");
 
         /* ウインドウ表示 */
         primaryStage.setScene(scene);
