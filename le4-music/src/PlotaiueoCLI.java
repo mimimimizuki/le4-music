@@ -251,8 +251,6 @@ public final class PlotaiueoCLI extends Application {
                                 L[aiueo] = -1 * sum;
                         }
                         index[i] = Le4MusicUtils.argmax(L);
-                        System.out.println(index[i]);
-
                 }
                 // (for f0)
                 double[] f0 = new double[times.length];
@@ -272,15 +270,51 @@ public final class PlotaiueoCLI extends Application {
                 }
                 double[] time = new double[index.length];
 
+                // n mod 12 = 0
+                // for chord recognization
+                double[] harmony_ans = new double[times.length];
+                int[] code_counter = new int[12];
+                for (int i = 0; i < times.length; i++) {
+                        double[] chroma_v = new double[12]; // initialize
+                        for (int j = 0; j < specLog[i].length; j++) {
+                                double f = j * sampleRate / fftSize;
+                                if (f != 0) {
+                                        int n = (int) Math.round(Le4MusicUtils.hz2nn(f));
+                                        if (n >= 0) {
+                                                int code = n % 12;
+                                                code_counter[code] += 1;
+                                                chroma_v[code] += Math.abs(specLog[i][j]);
+                                        }
+                                }
+                        }
+                        double[] harmony = new double[24]; // initialize
+                        for (int y = 0; y < 12; y++) {
+                                chroma_v[y] = chroma_v[y] / code_counter[y];
+                        }
+                        for (int w = 0; w <= 23; w++) {
+                                if (w % 2 == 0) { // major
+                                        harmony[w] = 1.0 * chroma_v[w / 2] + 0.5 * chroma_v[(w / 2 + 4) % 12]
+                                                        + 0.8 * chroma_v[(w / 2 + 7) % 12];
+                                } else { // minor
+                                        harmony[w] = 1.0 * chroma_v[(w - 1) / 2]
+                                                        + 0.5 * chroma_v[((w - 1) / 2 + 3) % 12]
+                                                        + 0.8 * chroma_v[((w - 1) / 2 + 7) % 12];
+                                }
+                        }
+                        harmony_ans[i] = Le4MusicUtils.argmax(harmony);
+
+                }
+
                 /* データ系列を作成 (for aiueo) */
                 final ObservableList<XYChart.Data<Number, Number>> data = IntStream.range(0, index.length)
                                 .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, index[i]))
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
                 /* データ系列を作成 (for animation line) */
-                final ObservableList<XYChart.Data<Number, Number>> data_a = IntStream.range(0, index.length)
-                                .mapToObj(i -> new XYChart.Data<Number, Number>(0.0, 4))
+                final ObservableList<XYChart.Data<Number, Number>> data_a = IntStream.range(0, 5)
+                                .mapToObj(i -> new XYChart.Data<Number, Number>(0.0, 0))
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
+                XYChart.Series<Number, Number> series_a = new XYChart.Series<>(data_a);
 
                 /* データ系列を作成 (for f0) */
                 final ObservableList<XYChart.Data<Number, Number>> data1 = IntStream.range(0, f0.length)
@@ -288,12 +322,19 @@ public final class PlotaiueoCLI extends Application {
                                                 new_freq[i] * sampleRate / fftSize))
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
+                /* データ系列を作成 (for chord) */
+                final ObservableList<XYChart.Data<Number, Number>> data2 = IntStream.range(0, harmony_ans.length)
+                                .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, harmony_ans[i]))
+                                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
                 /* データ系列に名前をつける (for aiueo) with animation */
                 final XYChart.Series<Number, Number> series = new XYChart.Series<>("aiueo", data);
-                final XYChart.Series<Number, Number> series_a = new XYChart.Series<>("line", data_a);
 
                 /* データ系列に名前をつける (for f0) */
                 final XYChart.Series<Number, Number> series1 = new XYChart.Series<>("f0", data1);
+
+                /* データ系列に名前をつける (for chord) */
+                final XYChart.Series<Number, Number> series2 = new XYChart.Series<>("chord", data2);
 
                 /* X 軸を作成 (for aiueo) */
                 final double duration = (waveform.length - 1) / sampleRate;
@@ -311,6 +352,11 @@ public final class PlotaiueoCLI extends Application {
                                 Le4MusicUtils.autoTickUnit(duration));
                 xAxis.setAnimated(false);
 
+                /* X 軸を作成 (for chord) */
+                final NumberAxis xAxis3 = new NumberAxis("Time (seconds)", 0.0, duration,
+                                Le4MusicUtils.autoTickUnit(duration));
+                xAxis.setAnimated(false);
+
                 /* Y 軸を作成 (for aiueo) */
                 final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "aiueo", /* lowerBound = */ 0,
                                 /* upperBound = */ 5, /* tickUnit = */ 5000);
@@ -322,6 +368,10 @@ public final class PlotaiueoCLI extends Application {
 
                 /* Y 軸を作成 (for f0) */
                 final NumberAxis yAxis2 = new NumberAxis("Frequency (Hz)", 0.0, 500, Le4MusicUtils.autoTickUnit(500));
+                yAxis.setAnimated(false);
+
+                /* Y 軸を作成 (for chord) */
+                final NumberAxis yAxis3 = new NumberAxis("chord", 0.0, 24, Le4MusicUtils.autoTickUnit(24));
                 yAxis.setAnimated(false);
 
                 /* チャートを作成 (for aiueo) */
@@ -349,11 +399,19 @@ public final class PlotaiueoCLI extends Application {
                 chart2.setLegendVisible(false);
                 chart2.getData().add(series1);
 
+                /* チャートを作成 (for chord) */
+                final LineChart<Number, Number> chart3 = new LineChart<>(xAxis3, yAxis3);
+                chart.setTitle("chord");
+                chart.setCreateSymbols(false);
+                chart.setLegendVisible(false);
+                chart.getData().add(series2);
+
                 GridPane gridPane = new GridPane();
                 gridPane.setMinSize(400, 400);
                 gridPane.add(chart, 0, 0); // aiueo
                 gridPane.add(chart1, 1, 0); // spectrogram
-                gridPane.add(chart2, 2, 1); // f0
+                gridPane.add(chart2, 0, 1); // f0
+                gridPane.add(chart3, 1, 1); // chord
 
                 /* グラフ描画 */
                 final Scene scene = new Scene(gridPane);
@@ -390,14 +448,14 @@ public final class PlotaiueoCLI extends Application {
                 final Player player = builder.build();
                 player.addAudioFrameListener((frame, position) -> Platform.runLater(() -> {
                         final double posInSec = position / player.getSampleRate();
+                        XYChart.Data<Number, Number> nowbottom = new XYChart.Data<Number, Number>(posInSec, 0);
+                        XYChart.Data<Number, Number> nowtop = new XYChart.Data<Number, Number>(posInSec, 5);
+
                         /* 最新フレームの波形を描画 */
-                        IntStream.range(0, player.getFrameSize()).forEach(i -> {
-                                data_a.get(i).setXValue(i + duration);
-                                // data_a.get(i).setYValue(frame[i]);
-                        });
-                        /* 軸を更新 */
-                        // xAxis.setUpperBound(posInSec);
-                        // xAxis.setLowerBound(posInSec - duration);
+                        data_a.clear();
+                        data_a.add(0, nowbottom);
+                        data_a.add(1, nowtop);
+                        System.out.println(data_a);
                 }));
 
                 /* 録音開始 */
