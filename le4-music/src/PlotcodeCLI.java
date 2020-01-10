@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.collections.FXCollections;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.image.WritableImage;
@@ -115,7 +116,7 @@ public final class PlotcodeCLI extends Application {
                 final double[] freqs = IntStream.range(0, fftSize2).mapToDouble(i -> i * sampleRate / fftSize)
                                 .toArray();
                 // n mod 12 = 0
-                double[] harmony_ans = new double[times.length];
+                int[] harmony_ans = new int[times.length];
                 int[] code_counter = new int[12];
                 for (int i = 0; i < times.length; i++) {
                         double[] chroma_v = new double[12]; // initialize
@@ -158,7 +159,7 @@ public final class PlotcodeCLI extends Application {
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
                 /* データ系列に名前をつける */
-                final XYChart.Series<Number, Number> series = new XYChart.Series<>("harmony", data);
+                final XYChart.Series<Number, String> series = new XYChart.Series<>();
 
                 /* X 軸を作成 */
                 final double duration = (waveform.length - 1) / sampleRate;
@@ -167,13 +168,21 @@ public final class PlotcodeCLI extends Application {
                 xAxis.setAnimated(false);
 
                 /* Y 軸を作成 */
-                final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "chord", /* lowerBound = */ 0,
-                                /* upperBound = */ 24, /* tickUnit = */ Le4MusicUtils.autoTickUnit(24));
+                final CategoryAxis yAxis = new CategoryAxis();
                 yAxis.setAnimated(false);
 
                 /* チャートを作成 */
-                final LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
+                String[] chord = new String[] { "C Major", "C Minor", "C# Major", "C# Minor", "D Major", "D Minor",
+                                "D# Major", "D# Minor", "E Major", "E Minor", "F Major", "F Minor", "F# Major",
+                                "F# Minor", "G Major", "G Minor", "G# Major", "G# Minor", "A Major", "A Minor",
+                                "A# Major", "A# Minor", "B Major", "B Minor" };
+                yAxis.setCategories(FXCollections.<String>observableArrayList(chord));
+                final LineChart<Number, String> chart = new LineChart<>(xAxis, yAxis);
                 chart.setTitle("harmony");
+                for (int i = 0; i < harmony_ans.length; i++) {
+                        series.getData().add(
+                                        new XYChart.Data<Number, String>(i * shiftDuration, chord[harmony_ans[i]]));
+                }
                 chart.setCreateSymbols(false);
                 chart.setLegendVisible(false);
                 chart.getData().add(series);
