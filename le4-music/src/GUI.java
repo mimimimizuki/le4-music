@@ -113,7 +113,7 @@ public final class GUI extends Application {
             final double frameDuration = Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
                     .orElse(Le4MusicUtils.frameDuration);
             final int frameSize = (int) Math.round(frameDuration * sampleRate);
-            final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
+            final int fftSize = 1 << Le4MusicUtils.nextPow2(frameSize);
             final int fftSize2 = (fftSize >> 1) + 1;
             /*
              * 信号の長さをfftSize に伸ばし， 長さが足りない部分は0 で埋める． 振幅を信号長で正規化する．
@@ -188,8 +188,11 @@ public final class GUI extends Application {
         final double frameDuration = Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
                 .orElse(Le4MusicUtils.frameDuration);
         final int frameSize = (int) Math.round(frameDuration * sampleRate);
-        final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
-        final int fftSize2 = (fftSize >> 1) + 1;
+        // final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
+        // final int fftSize2 = (fftSize >> 1) + 1;
+
+        final int fftSize_test = 1 << Le4MusicUtils.nextPow2(frameSize);
+        final int fftSize2_test = (fftSize_test >> 1) + 1;
         /*
          * 信号の長さをfftSize に伸ばし， 長さが足りない部分は0 で埋める． 振幅を信号長で正規化する．
          */
@@ -198,7 +201,7 @@ public final class GUI extends Application {
                 .orElse(Le4MusicUtils.frameDuration / 8);
         final int shiftSize = (int) Math.round(shiftDuration * sampleRate);
         /* 窓関数を求め， それを正規化する */
-        final double[] window = MathArrays.normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(frameSize), fftSize),
+        final double[] window = MathArrays.normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(frameSize), fftSize_test),
                 1.0);
         /* 短時間フーリエ変換本体 (for aiueo) */
         final Stream<Complex[]> spectrogram = Le4MusicUtils.sliding(waveform, window, shiftSize)
@@ -256,7 +259,8 @@ public final class GUI extends Application {
         for (int i = 0; i < times.length; i++) {
             // specLog[i][j]が振幅
             for (int j = 0; j < specLog[i].length; j++) {
-                if (j * sampleRate / fftSize < upperf0 && j * sampleRate / fftSize > lowerf0 && specLog[i][j] > f0[i]) {
+                if (j * sampleRate / fftSize_test < upperf0 && j * sampleRate / fftSize_test > lowerf0
+                        && specLog[i][j] > f0[i]) {
                     f0[i] = specLog[i][j];
                     new_freq[i] = j;
                 }
@@ -271,7 +275,7 @@ public final class GUI extends Application {
         for (int i = 0; i < times.length; i++) {
             double[] chroma_v = new double[12]; // initialize
             for (int j = 0; j < specLog[i].length; j++) {
-                double f = j * sampleRate / fftSize;
+                double f = j * sampleRate / fftSize_test;
                 if (f != 0) {
                     int n = (int) Math.round(Le4MusicUtils.hz2nn(f));
                     if (n >= 0) {
@@ -307,8 +311,8 @@ public final class GUI extends Application {
         XYChart.Series<Number, Number> series_a = new XYChart.Series<>(data_a);
 
         /* データ系列を作成 (for f0) */
-        final ObservableList<XYChart.Data<Number, Number>> data1 = IntStream.range(0, f0.length)
-                .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration, new_freq[i] * sampleRate / fftSize))
+        final ObservableList<XYChart.Data<Number, Number>> data1 = IntStream.range(0, f0.length).mapToObj(
+                i -> new XYChart.Data<Number, Number>(i * shiftDuration, new_freq[i] * sampleRate / fftSize_test))
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         /* データ系列を作成 (for chord) あとで */
@@ -372,16 +376,17 @@ public final class GUI extends Application {
 
         /* チャートを作成 (for spectrogram) with animation */
         final LineChartWithSpectrogram<Number, Number> chart1 = new LineChartWithSpectrogram<>(xAxis1, yAxis1);
-        chart1.setParameters(specLog1.length, fftSize2, nyquist);
+        chart1.setParameters(specLog1.length, fftSize2_test, nyquist);
         chart1.setTitle("Spectrogram");
         Arrays.stream(specLog1).forEach(chart1::addSpecLog);
         chart1.setCreateSymbols(false);
         chart1.setLegendVisible(false);
+        chart1.setAnimated(false);
         chart1.getData().add(series_a); // with animation
 
         /* チャートを作成 (for f0) */
         final LineChartWithSpectrogram<Number, Number> chart2 = new LineChartWithSpectrogram<>(xAxis2, yAxis2);
-        chart2.setParameters(specLog1.length, fftSize2, nyquist);
+        chart2.setParameters(specLog1.length, fftSize2_test, nyquist);
         Arrays.stream(specLog1).forEach(chart2::addSpecLog);
         chart2.setTitle("f0");
         chart2.setCreateSymbols(false);
@@ -442,6 +447,7 @@ public final class GUI extends Application {
         builder.daemon();
         final Player player = builder.build();
         player.addAudioFrameListener((frame, position) -> Platform.runLater(() -> {
+            System.out.println(position);
             final double posInSec = position / player.getSampleRate();
             XYChart.Data<Number, Number> nowbottom = new XYChart.Data<Number, Number>(posInSec, 0);
             XYChart.Data<Number, Number> nowtop = new XYChart.Data<Number, Number>(posInSec, 600);
