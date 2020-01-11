@@ -268,23 +268,9 @@ public final class PlotaiueoCLI extends Application {
                 chart.setTitle("aiueo");
                 String[] CATEGORIES = new String[] { "a", "i", "u", "e", "o" };
                 yAxis.setCategories(FXCollections.<String>observableArrayList(CATEGORIES));
+
                 for (int i = 0; i < index.length; i++) {
-                        if (index[i] == 0) {
-                                series.getData().add(
-                                                new XYChart.Data<Number, String>(i * shiftDuration, CATEGORIES[0]));
-                        } else if (index[i] == 1) {
-                                series.getData().add(
-                                                new XYChart.Data<Number, String>(i * shiftDuration, CATEGORIES[1]));
-                        } else if (index[i] == 2) {
-                                series.getData().add(
-                                                new XYChart.Data<Number, String>(i * shiftDuration, CATEGORIES[2]));
-                        } else if (index[i] == 3) {
-                                series.getData().add(
-                                                new XYChart.Data<Number, String>(i * shiftDuration, CATEGORIES[3]));
-                        } else {
-                                series.getData().add(
-                                                new XYChart.Data<Number, String>(i * shiftDuration, CATEGORIES[4]));
-                        }
+                        new XYChart.Data<Number, String>(i * shiftDuration, CATEGORIES[i]);
                 }
                 chart.setCreateSymbols(false);
                 chart.setLegendVisible(false);

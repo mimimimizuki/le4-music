@@ -101,7 +101,7 @@ public final class Plotf0CLI extends Application {
                 final Stream<Complex[]> spectrogram = Le4MusicUtils.sliding(waveform, window, shiftSize)
                                 .map(frame -> Le4MusicUtils.rfft(frame));
 
-                /* 複素スペクトログラムを対数振幅スペクトログラムに */
+                /* 複素スペクトログラムを振幅スペクトログラムに 基本周波数用 */
                 double[][] specLog = spectrogram.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
                                 .toArray(n -> new double[n][]);
 
@@ -109,16 +109,9 @@ public final class Plotf0CLI extends Application {
                 final Stream<Complex[]> spectrogram1 = Le4MusicUtils.sliding(waveform, window, shiftSize)
                                 .map(frame -> Le4MusicUtils.rfft(frame));
 
-                /* 複素スペクトログラムを対数振幅スペクトログラムに */
+                /* 複素スペクトログラムを対数振幅スペクトログラムに グラフ表示用 */
                 final double[][] specLog1 = spectrogram1
                                 .map(sp -> Arrays.stream(sp).mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray())
-                                .toArray(n -> new double[n][]);
-
-                final Stream<Complex[]> spectrogram2 = Le4MusicUtils.sliding(waveform, window, shiftSize)
-                                .map(frame -> Le4MusicUtils.rfft(frame));
-
-                /* 複素スペクトログラムを対数振幅スペクトログラムに */
-                double[][] specLog2 = spectrogram2.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.getReal()).toArray())
                                 .toArray(n -> new double[n][]);
 
                 /* 参考： フレーム数と各フレーム先頭位置の時刻 */
@@ -138,7 +131,7 @@ public final class Plotf0CLI extends Application {
                         // specLog[i][j]が振幅
                         for (int j = 0; j < specLog[i].length; j++) {
                                 if (j * sampleRate / fftSize < upperf0 && j * sampleRate / fftSize > lowerf0
-                                                && specLog[i][j] > f0[i]) {
+                                                && specLog[i][j] > f0[i]) {// 振幅の最大値を取ってくる
                                         f0[i] = specLog[i][j];
                                         new_freq[i] = j;
                                 }
@@ -150,12 +143,12 @@ public final class Plotf0CLI extends Application {
                 for (int m = 0; m < waveform.length - 1 - frameSize; m += shiftSize) {
                         int zero_counter = 0;
                         for (int n = m; n < m + frameSize - 1; n++) {
-                                if (waveform[n] * waveform[n + 1] < 0) {
+                                if (waveform[n] * waveform[n + 1] < 0) { // これらの点の掛け算がゼロだと前後のうちどちらかが負でどちらかが正であることがわかる.
                                         zero_counter += 1;
                                 }
                         }
-                        if (zero_counter > 2 * new_freq[pointer]) {
-                                // new_freq[pointer] = 0;
+                        if (zero_counter > 2 * new_freq[pointer] + 180) {
+                                new_freq[pointer] = 0;
                         }
                         pointer++;
                 }
@@ -170,7 +163,7 @@ public final class Plotf0CLI extends Application {
                 final XYChart.Series<Number, Number> series = new XYChart.Series<>("Waveform", data);
 
                 /* X 軸を作成 */
-                final double duration = (waveform.length - 1) / sampleRate;
+                final double duration = (specLog.length - 1) * shiftDuration;
                 final NumberAxis xAxis = new NumberAxis(/* axisLabel = */ "Time (seconds)", /* lowerBound = */ 0.0,
                                 /* upperBound = */ duration, /* tickUnit = */ Le4MusicUtils.autoTickUnit(duration));
                 xAxis.setAnimated(false);
@@ -183,7 +176,7 @@ public final class Plotf0CLI extends Application {
                 /* チャートを作成 */
                 final LineChartWithSpectrogram<Number, Number> chart = new LineChartWithSpectrogram<>(xAxis, yAxis);
                 chart.setParameters(specLog.length, fftSize2, nyquist);
-                Arrays.stream(specLog1).forEach(chart::addSpecLog);
+                Arrays.stream(specLog1).forEach(chart::addSpecLog); // グラフにスペクトログラム表示
                 chart.setTitle("f0");
                 chart.setCreateSymbols(false);
                 chart.setLegendVisible(false);

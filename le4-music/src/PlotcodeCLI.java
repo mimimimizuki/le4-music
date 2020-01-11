@@ -105,7 +105,7 @@ public final class PlotcodeCLI extends Application {
 
                 System.out.print(shiftSize);
 
-                /* 複素スペクトログラムを対数振幅スペクトログラムに */
+                /* 複素スペクトログラムを振幅スペクトログラムに */
                 final double[][] specLog = spectrogram.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
                                 .toArray(n -> new double[n][]);
 
@@ -123,9 +123,9 @@ public final class PlotcodeCLI extends Application {
                         for (int j = 0; j < specLog[i].length; j++) {
                                 double f = j * sampleRate / fftSize;
                                 if (f != 0) {
-                                        int n = (int) Math.round(Le4MusicUtils.hz2nn(f));
+                                        int n = (int) Math.round(Le4MusicUtils.hz2nn(f)); // この周波数に対応するノートナンバー
                                         if (n >= 0) {
-                                                int code = n % 12;
+                                                int code = n % 12; // そのノートナンバーを12で割ると0,..11がC, C#,...に対応する
                                                 code_counter[code] += 1;
                                                 chroma_v[code] += Math.abs(specLog[i][j]);
                                         }
@@ -133,24 +133,19 @@ public final class PlotcodeCLI extends Application {
                         }
                         double[] harmony = new double[24]; // initialize
                         for (int y = 0; y < 12; y++) {
-                                chroma_v[y] = chroma_v[y] / code_counter[y];
+                                chroma_v[y] = chroma_v[y] / code_counter[y]; // 現れるコードナンバーに偏りがないように正規化(平均をとる)
                         }
                         for (int w = 0; w <= 23; w++) {
                                 if (w % 2 == 0) { // major
                                         harmony[w] = 1.0 * chroma_v[w / 2] + 0.5 * chroma_v[(w / 2 + 4) % 12]
                                                         + 0.8 * chroma_v[(w / 2 + 7) % 12];
-                                        // System.out.println(harmony[w] + ", " + w / 2 + ", " + (w / 2 + 4) % 12 + ", "
-                                        // + (w / 2 + 7) % 12);
                                 } else { // minor
                                         harmony[w] = 1.0 * chroma_v[(w - 1) / 2]
                                                         + 0.5 * chroma_v[((w - 1) / 2 + 3) % 12]
                                                         + 0.8 * chroma_v[((w - 1) / 2 + 7) % 12];
-                                        // System.out.println(harmony[w] + ", " + ((w - 1) / 2) + ", "
-                                        // + ((w - 1) / 2 + 3) % 12 + ", " + ((w - 1) / 2 + 7) % 12);
                                 }
                         }
                         harmony_ans[i] = Le4MusicUtils.argmax(harmony);
-
                 }
 
                 /* データ系列を作成 */
