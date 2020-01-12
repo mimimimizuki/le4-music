@@ -184,13 +184,15 @@ public final class karaoke extends Application {
                                 Le4MusicUtils.autoTickUnit(frameDuration));
 
                 final NumberAxis yAxis_waveform = new NumberAxis(/* axisLabel = */ "Freqency (Hz)",
-                                /* lowerBound = */ 0.0, /* upperBound = */ 600,
-                                /* tickUnit = */ Le4MusicUtils.autoTickUnit(600));
+                                /* lowerBound = */ 0.0, /* upperBound = */ 1000,
+                                /* tickUnit = */ Le4MusicUtils.autoTickUnit(1000));
 
                 /* スペクトログラム表示chart */
                 final LineChartWithSpectrogram<Number, Number> chart = new LineChartWithSpectrogram<>(xAxis, yAxis);
                 chart.setParameters(frames, fftSize2, player.getNyquist());
                 chart.setTitle("Spectrogram");
+                chart.setAnimated(false);
+                chart.setLegendVisible(false);
 
                 final LineChart<Number, Number> chart_waveform = new LineChart<Number, Number>(xAxis_waveform,
                                 yAxis_waveform);
@@ -218,6 +220,8 @@ public final class karaoke extends Application {
                 primaryStage.show();
                 Platform.setImplicitExit(true);
 
+                String[] pitch = new String[] { "ド", "ド#", "レ", "ミ♭", "ミ", "ファ", "ファ#", "ソ", "ソ#", "ラ", "シ♭", "シ" };
+
                 recorder.addAudioFrameListener((frame, position) -> Platform.runLater(() -> {
                         final double rms = Arrays.stream(frame).map(x -> x * x).average().orElse(0.0);
                         final double logRms = 20.0 * Math.log10(rms);
@@ -235,7 +239,7 @@ public final class karaoke extends Application {
                         double[] freq0 = new double[specLog_f0.length];
                         for (int m = 0; m < specLog_f0.length; m++) {
                                 for (int k = 0; k < specLog_f0[m].length; k++) {
-                                        if (specLog_f0[m][k] > 800.0) {
+                                        if (k * recorder.getSampleRate() / fftSize_f0 > 800.0) {
                                                 specLog_f0[m][k] = 0.0;
                                         }
                                 }
@@ -247,9 +251,9 @@ public final class karaoke extends Application {
                                         min = freq0[z];
                                 }
                         }
-                        xAxis_waveform.setLowerBound(posInSec - frameDuration);
+                        xAxis_waveform.setLowerBound(posInSec - duration);
                         xAxis_waveform.setUpperBound(posInSec);
-                        if (posInSec > frameDuration) {
+                        if (posInSec > duration) {
                                 data_waveform.remove(0, 1);
                         }
                         if (logRms < -100) {
@@ -257,7 +261,11 @@ public final class karaoke extends Application {
                         }
                         XYChart.Data<Number, Number> datum = new XYChart.Data<Number, Number>(posInSec,
                                         min * recorder.getSampleRate() / fftSize_f0);
+
                         data_waveform.add(datum);
+                        int noteNum = (int) Math
+                                        .round(Le4MusicUtils.hz2nn(min * recorder.getSampleRate() / fftSize_f0));
+                        System.out.print(pitch[noteNum % 12]);
                 }));
                 recorder.start();
 
