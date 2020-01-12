@@ -1,4 +1,3 @@
-
 import java.lang.invoke.MethodHandles;
 import java.io.File;
 import java.util.Optional;
@@ -36,16 +35,14 @@ import org.apache.commons.cli.ParseException;
 public final class RecMonitorWaveform extends Application {
 
   private static final Options options = new Options();
-  private static final String helpMessage =
-    MethodHandles.lookup().lookupClass().getName() + " [OPTIONS]";
+  private static final String helpMessage = MethodHandles.lookup().lookupClass().getName() + " [OPTIONS]";
 
   static {
     /* コマンドラインオプション定義 */
     options.addOption("h", "help", false, "Display this help and exit");
     options.addOption("v", "verbose", false, "Verbose output");
-    options.addOption("m", "mixer", true,
-                      "Index of Mixer object that supplies a SourceDataLine object. " +
-                      "To check the proper index, use CheckAudioSystem");
+    options.addOption("m", "mixer", true, "Index of Mixer object that supplies a SourceDataLine object. "
+        + "To check the proper index, use CheckAudioSystem");
     options.addOption("o", "outfile", true, "Output file");
     options.addOption("r", "rate", true, "Sampling rate [Hz]");
     options.addOption("f", "frame", true, "Frame duration [seconds]");
@@ -54,10 +51,7 @@ public final class RecMonitorWaveform extends Application {
 
   @Override /* Application */
   public final void start(final Stage primaryStage)
-  throws IOException,
-         UnsupportedAudioFileException,
-         LineUnavailableException,
-         ParseException {
+      throws IOException, UnsupportedAudioFileException, LineUnavailableException, ParseException {
     /* コマンドライン引数処理 */
     final String[] args = getParameters().getRaw().toArray(new String[0]);
     final CommandLine cmd = new DefaultParser().parse(options, args);
@@ -68,27 +62,17 @@ public final class RecMonitorWaveform extends Application {
     }
     verbose = cmd.hasOption("verbose");
 
-    final double frameDuration =
-      Optional.ofNullable(cmd.getOptionValue("frame"))
-      .map(Double::parseDouble)
-      .orElse(Le4MusicUtils.frameDuration);
+    final double frameDuration = Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
+        .orElse(Le4MusicUtils.frameDuration);
 
     /* Recorderオブジェクトを生成 */
     final Recorder.Builder builder = Recorder.builder();
-    Optional.ofNullable(cmd.getOptionValue("rate"))
-      .map(Float::parseFloat)
-      .ifPresent(builder::sampleRate);
-    Optional.ofNullable(cmd.getOptionValue("mixer"))
-      .map(Integer::parseInt)
-      .map(index -> AudioSystem.getMixerInfo()[index])
-      .ifPresent(builder::mixer);
-    Optional.ofNullable(cmd.getOptionValue("outfile"))
-      .map(File::new)
-      .ifPresent(builder::wavFile);
+    Optional.ofNullable(cmd.getOptionValue("rate")).map(Float::parseFloat).ifPresent(builder::sampleRate);
+    Optional.ofNullable(cmd.getOptionValue("mixer")).map(Integer::parseInt)
+        .map(index -> AudioSystem.getMixerInfo()[index]).ifPresent(builder::mixer);
+    Optional.ofNullable(cmd.getOptionValue("outfile")).map(File::new).ifPresent(builder::wavFile);
     builder.frameDuration(frameDuration);
-    Optional.ofNullable(cmd.getOptionValue("interval"))
-      .map(Double::parseDouble)
-      .ifPresent(builder::interval);
+    Optional.ofNullable(cmd.getOptionValue("interval")).map(Double::parseDouble).ifPresent(builder::interval);
     builder.daemon();
     final Recorder recorder = builder.build();
 
@@ -96,32 +80,21 @@ public final class RecMonitorWaveform extends Application {
     final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /* データ系列を作成 */
-    final ObservableList<XYChart.Data<Number, Number>> data =
-      IntStream.range(-recorder.getFrameSize(), 0)
-        .mapToDouble(i -> i / recorder.getSampleRate())
-        .mapToObj(t -> new XYChart.Data<Number, Number>(t, 0.0))
+    final ObservableList<XYChart.Data<Number, Number>> data = IntStream.range(-recorder.getFrameSize(), 0)
+        .mapToDouble(i -> i / recorder.getSampleRate()).mapToObj(t -> new XYChart.Data<Number, Number>(t, 0.0))
         .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
     /* データ系列に名前をつける */
-    final XYChart.Series<Number, Number> series =
-      new XYChart.Series<>("Waveform", data);
+    final XYChart.Series<Number, Number> series = new XYChart.Series<>("Waveform", data);
 
     /* 波形リアルタイム表示 */
     /* 軸を作成 */
     /* 時間軸（横軸） */
-    final NumberAxis xAxis = new NumberAxis(
-      /* axisLabel  = */ "Time (seconds)",
-      /* lowerBound = */ -frameDuration,
-      /* upperBound = */ 0.0,
-      /* tickUnit   = */ Le4MusicUtils.autoTickUnit(frameDuration)
-    );
+    final NumberAxis xAxis = new NumberAxis(/* axisLabel = */ "Time (seconds)", /* lowerBound = */ -frameDuration,
+        /* upperBound = */ 0.0, /* tickUnit = */ Le4MusicUtils.autoTickUnit(frameDuration));
     /* 周波数軸（縦軸） */
-    final NumberAxis yAxis = new NumberAxis(
-      /* axisLabel  = */ "Amplitude",
-      /* lowerBound = */ -1.0,
-      /* upperBound = */ +1.0,
-      /* tickUnit   = */ Le4MusicUtils.autoTickUnit(1.0 * 2)
-    );
+    final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "Amplitude", /* lowerBound = */ -1.0,
+        /* upperBound = */ +1.0, /* tickUnit = */ Le4MusicUtils.autoTickUnit(1.0 * 2));
 
     /* チャートを作成 */
     final LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
@@ -135,8 +108,8 @@ public final class RecMonitorWaveform extends Application {
     chart.getData().add(series);
 
     /* 描画ウインドウ作成 */
-    final Scene scene  = new Scene(chart, 800, 600);
-    scene.getStylesheets().add("src/le4music.css");
+    final Scene scene = new Scene(chart, 800, 600);
+    scene.getStylesheets().add("le4music.css");
     primaryStage.setScene(scene);
     primaryStage.setTitle(getClass().getName());
     /* ウインドウを閉じたときに他スレッドも停止させる */

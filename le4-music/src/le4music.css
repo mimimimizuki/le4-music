@@ -5,7 +5,11 @@
 .chart-series-line {
   -fx-stroke-width: 2px;
   -fx-effect: null;
-  -fx-stroke: lightgrey;
+  -fx-stroke:#6B8E23;
+}
+
+.chart-plot-background {
+  -fx-background-color: #FFEFD5;
 }
 
 .on-spectrogram .chart-series-line {
