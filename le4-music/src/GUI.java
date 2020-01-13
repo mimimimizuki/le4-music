@@ -107,7 +107,7 @@ public final class GUI extends Application {
             stream.close();
 
             /*
-             * fftSize = 2ˆp >= waveform.length を満たすfftSize を求める 2ˆp はシフト演算で求める
+             * fftSize = 2ˆp >= frameSize を満たすfftSize を求める 2ˆp はシフト演算で求める
              */
             /* 窓関数とFFTのサンプル数 */
             final double frameDuration = Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
@@ -129,7 +129,7 @@ public final class GUI extends Application {
             final Stream<Complex[]> spectrogram = Le4MusicUtils.sliding(waveform, window, shiftSize)
                     .map(frame -> Le4MusicUtils.rfft(frame));
 
-            /* 複素スペクトログラムを対数振幅スペクトログラムに */
+            /* 複素スペクトログラムを振幅スペクトログラムに */
             double[][] specLog = spectrogram.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
                     .toArray(n -> new double[n][]);
 
@@ -149,7 +149,7 @@ public final class GUI extends Application {
                 ceps[i] = new double[13];
                 for (int j = 0; j < 13; j++) {
                     ceps[i][j] = cepstrum[i][j].getReal();
-                } // これを１３こだけ使う予定
+                } // これを１３こだけ使う予定(13次のケプストラム)
             }
             for (int i = 0; i < 13; i++) {
                 double sum = 0;
@@ -167,7 +167,7 @@ public final class GUI extends Application {
             }
         }
 
-        final File wavFile_tes = new File(pargs[5]);
+        final File wavFile_tes = new File(pargs[5]); // テスト用の音声
         System.out.println("test file is " + wavFile_tes);
         final AudioInputStream stream = AudioSystem.getAudioInputStream(wavFile_tes);
         final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
@@ -182,15 +182,12 @@ public final class GUI extends Application {
         final ExecutorService executor = Executors.newSingleThreadExecutor();
 
         /*
-         * fftSize = 2ˆp >= waveform.length を満たすfftSize を求める 2ˆp はシフト演算で求める
+         * fftSize = 2ˆp >= frameSize を満たすfftSize を求める 2ˆp はシフト演算で求める
          */
         /* 窓関数とFFTのサンプル数 */
         final double frameDuration = Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
                 .orElse(Le4MusicUtils.frameDuration);
         final int frameSize = (int) Math.round(frameDuration * sampleRate);
-        // final int fftSize = 1 << Le4MusicUtils.nextPow2(waveform.length);
-        // final int fftSize2 = (fftSize >> 1) + 1;
-
         final int fftSize_test = 1 << Le4MusicUtils.nextPow2(frameSize);
         final int fftSize2_test = (fftSize_test >> 1) + 1;
         /*
@@ -215,7 +212,7 @@ public final class GUI extends Application {
         final Stream<Complex[]> spectrogram1 = Le4MusicUtils.sliding(waveform, window, shiftSize)
                 .map(frame -> Le4MusicUtils.rfft(frame));
 
-        /* 複素スペクトログラムを振幅スペクトログラムに (for spectrogram) */
+        /* 複素スペクトログラムを対数振幅スペクトログラムに (for spectrogram) */
         double[][] specLog1 = spectrogram1
                 .map(sp -> Arrays.stream(sp).mapToDouble(c -> 20.0 * Math.log10(c.abs())).toArray())
                 .toArray(n -> new double[n][]);
@@ -246,15 +243,15 @@ public final class GUI extends Application {
                     sum += Math.log(Math.sqrt(s_power[aiueo][d]))
                             + (Math.pow((ceps[i][d] - average[aiueo][d]), 2) / (2 * s_power[aiueo][d]));
                 }
-                L[aiueo] = -1 * sum;
+                L[aiueo] = -1 * sum; // 対数尤度の計算
             }
-            index[i] = Le4MusicUtils.argmax(L);
+            index[i] = Le4MusicUtils.argmax(L); // これが最も大きいのが認識結果の母音
         }
         // (for f0)
         double[] f0 = new double[times.length];
         double[] new_freq = new double[times.length];
         final double lowerf0 = Le4MusicUtils.f0LowerBound;
-        final double upperf0 = 400;
+        final double upperf0 = 400; // 基本周波数の最大値
 
         for (int i = 0; i < times.length; i++) {
             // specLog[i][j]が振幅
@@ -273,7 +270,7 @@ public final class GUI extends Application {
         int[] harmony_ans = new int[times.length];
         int[] code_counter = new int[12];
         for (int i = 0; i < times.length; i++) {
-            double[] chroma_v = new double[12]; // initialize
+            double[] chroma_v = new double[12]; // initialize(クロマベクトル)
             for (int j = 0; j < specLog[i].length; j++) {
                 double f = j * sampleRate / fftSize_test;
                 if (f != 0) {
@@ -285,9 +282,9 @@ public final class GUI extends Application {
                     }
                 }
             }
-            double[] harmony = new double[24]; // initialize
+            double[] harmony = new double[24]; // initialize(和音らしさ)
             for (int y = 0; y < 12; y++) {
-                chroma_v[y] = chroma_v[y] / code_counter[y];
+                chroma_v[y] = chroma_v[y] / code_counter[y]; // 得られる音の数にばらつきがあるので,正規化(平均をとる)
             }
             for (int w = 0; w <= 23; w++) {
                 if (w % 2 == 0) { // major

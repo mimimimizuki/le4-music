@@ -226,7 +226,8 @@ public final class karaoke extends Application {
                         final double rms = Arrays.stream(frame).map(x -> x * x).average().orElse(0.0);
                         final double logRms = 20.0 * Math.log10(rms);
                         final double posInSec = position / recorder.getSampleRate();
-                        System.out.printf("Position %d (%.2f sec), RMS %f dB%n", position, posInSec, logRms);
+                        // System.out.printf("Position %d (%.2f sec), RMS %f dB%n", position, posInSec,
+                        // logRms);
 
                         final int fftSize_f0 = 1 << Le4MusicUtils.nextPow2(recorder.getFrameSize());
                         final double[] window_f0 = MathArrays.normalizeArray(
@@ -251,7 +252,7 @@ public final class karaoke extends Application {
                                         min = freq0[z];
                                 }
                         }
-                        xAxis_waveform.setLowerBound(posInSec - duration);
+                        xAxis_waveform.setLowerBound(posInSec - frameDuration);
                         xAxis_waveform.setUpperBound(posInSec);
                         if (posInSec > duration) {
                                 data_waveform.remove(0, 1);

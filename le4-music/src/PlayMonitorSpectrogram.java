@@ -82,6 +82,9 @@ public final class PlayMonitorSpectrogram extends Application {
 
     final double duration = Optional.ofNullable(cmd.getOptionValue("duration")).map(Double::parseDouble)
         .orElse(Le4MusicUtils.spectrogramDuration);
+
+    System.out.print(duration);
+
     final double interval = Optional.ofNullable(cmd.getOptionValue("interval")).map(Double::parseDouble)
         .orElse(Le4MusicUtils.frameInterval);
 
@@ -163,6 +166,7 @@ public final class PlayMonitorSpectrogram extends Application {
 
     /* 録音開始 */
     Platform.runLater(player::start);
+
   }
 
 }
