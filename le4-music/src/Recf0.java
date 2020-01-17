@@ -69,7 +69,8 @@ public final class Recf0 extends Application {
 
         final double frameDuration = Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
                 .orElse(Le4MusicUtils.frameDuration);
-
+        final double duration = Optional.ofNullable(cmd.getOptionValue("duration")).map(Double::parseDouble)
+                .orElse(Le4MusicUtils.spectrogramDuration);
         /* シフトのサンプル数 */
         final double shiftDuration = Optional.ofNullable(cmd.getOptionValue("shift")).map(Double::parseDouble)
                 .orElse(Le4MusicUtils.frameDuration / 8);
@@ -154,7 +155,7 @@ public final class Recf0 extends Application {
                     min = freq0[z];
                 }
             }
-            xAxis.setLowerBound(posInSec - frameDuration);
+            xAxis.setLowerBound(posInSec - duration);
             xAxis.setUpperBound(posInSec);
             if (posInSec > frameDuration) {
                 data.remove(0, 1);
