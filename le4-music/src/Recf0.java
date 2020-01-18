@@ -1,5 +1,6 @@
 import java.lang.invoke.MethodHandles;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -28,8 +29,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.math3.complex.Complex;
 
 import jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils;
-import jp.ac.kyoto_u.kuis.le4music.Recorder;
+import jp.ac.kyoto_u.kuis.le4music.Player;
 import static jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils.verbose;
+import jp.ac.kyoto_u.kuis.le4music.LineChartWithSpectrogram;
 
 import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -66,40 +68,65 @@ public final class Recf0 extends Application {
             return;
         }
         verbose = cmd.hasOption("verbose");
+        final String[] pargs = cmd.getArgs();
+        if (pargs.length < 1) {
+        System.out.println("WAVFILE is not given.");
+        new HelpFormatter().printHelp(helpMessage, options);
+        Platform.exit();
+        return;
+        }
+        final File wavFile = new File(pargs[0]);
 
         final double frameDuration = Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
                 .orElse(Le4MusicUtils.frameDuration);
-        final double duration = Optional.ofNullable(cmd.getOptionValue("duration")).map(Double::parseDouble)
-                .orElse(Le4MusicUtils.spectrogramDuration);
+                
+        final double duration = 5.0;
+        // Optional.ofNullable(cmd.getOptionValue("duration")).map(Double::parseDouble)
+        //         .orElse(Le4MusicUtils.spectrogramDuration);
         /* シフトのサンプル数 */
         final double shiftDuration = Optional.ofNullable(cmd.getOptionValue("shift")).map(Double::parseDouble)
                 .orElse(Le4MusicUtils.frameDuration / 8);
-        final int shiftSize = (int) Math.round(shiftDuration * 16000);
+        
+        final double interval = Optional.ofNullable(cmd.getOptionValue("interval")).map(Double::parseDouble)
+        .orElse(Le4MusicUtils.frameInterval);
+        /* フレーム数 */
+    final int frames = (int) Math.round(duration / interval);
 
-        /* Recorderオブジェクトを生成 */
-        final Recorder.Builder builder = Recorder.builder();
-        Optional.ofNullable(cmd.getOptionValue("rate")).map(Float::parseFloat).ifPresent(builder::sampleRate);
+        /* Player を作成 */
+        final Player.Builder builder = Player.builder(wavFile);
         Optional.ofNullable(cmd.getOptionValue("mixer")).map(Integer::parseInt)
-                .map(index -> AudioSystem.getMixerInfo()[index]).ifPresent(builder::mixer);
-        Optional.ofNullable(cmd.getOptionValue("outfile")).map(File::new).ifPresent(builder::wavFile);
-        builder.frameDuration(frameDuration);
-        Optional.ofNullable(cmd.getOptionValue("interval")).map(Double::parseDouble).ifPresent(builder::interval);
+                        .map(index -> AudioSystem.getMixerInfo()[index]).ifPresent(builder::mixer);
+        if (cmd.hasOption("loop"))
+                builder.loop();
+        Optional.ofNullable(cmd.getOptionValue("buffer")).map(Double::parseDouble)
+                        .ifPresent(builder::bufferDuration);
+        Optional.ofNullable(cmd.getOptionValue("frame")).map(Double::parseDouble)
+                        .ifPresent(builder::frameDuration);
+        builder.interval(interval);
         builder.daemon();
-        final Recorder recorder = builder.build();
+        final Player player = builder.build();
+
+        final int shiftSize = (int) Math.round(shiftDuration * player.getSampleRate());
 
         /* データ処理スレッド */
         final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+        /* 窓関数とFFTのサンプル数 */
+        final int fftSize = 1 << Le4MusicUtils.nextPow2(player.getFrameSize());
+        final int fftSize2 = (fftSize >> 1) + 1;
+
+        /* 窓関数を求め，それを正規化する */
+        final double[] window = MathArrays.normalizeArray(Le4MusicUtils.hanning(player.getFrameSize()), 1.0);
+
+
         /* データ系列を作成 */
-        final ObservableList<XYChart.Data<Number, Number>> data = IntStream.range(-recorder.getFrameSize(), 0)
-                .mapToDouble(i -> i / recorder.getSampleRate()).mapToObj(t -> new XYChart.Data<Number, Number>(t, 0.0))
+        final ObservableList<XYChart.Data<Number, Number>> data = IntStream.range(-player.getFrameSize(), 0)
+                .mapToDouble(i -> i / player.getSampleRate()).mapToObj(t -> new XYChart.Data<Number, Number>(t, 0.0))
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         /* データ系列に名前をつける */
-        final XYChart.Series<Number, Number> series = new XYChart.Series<>("Waveform", data);
+        final XYChart.Series<Number, Number> series = new XYChart.Series<>("f0", data);
 
-        /* 波形リアルタイム表示 */
-        /* 軸を作成 */
         /* 時間軸（横軸） */
         final NumberAxis xAxis = new NumberAxis(/* axisLabel = */ "Time (seconds)", /* lowerBound = */ -frameDuration,
                 /* upperBound = */ 0.0, /* tickUnit = */ Le4MusicUtils.autoTickUnit(frameDuration));
@@ -108,8 +135,10 @@ public final class Recf0 extends Application {
                 /* upperBound = */ 600, /* tickUnit = */ Le4MusicUtils.autoTickUnit(600));
 
         /* チャートを作成 */
-        final LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
-        chart.setTitle("Waveform");
+        /* スペクトログラム表示chart */
+        final LineChartWithSpectrogram<Number, Number> chart = new LineChartWithSpectrogram<>(xAxis, yAxis);
+        chart.setParameters(frames, fftSize2, player.getNyquist());
+        chart.setTitle("Spectrogram");
         chart.setLegendVisible(false);
         /* データの追加・削除時にアニメーション（フェードイン・アウトなど）しない */
         chart.setAnimated(false);
@@ -117,6 +146,8 @@ public final class Recf0 extends Application {
         chart.setCreateSymbols(false);
 
         chart.getData().add(series);
+        String[] pitch = new String[] { "ド", "ド#", "レ", "ミ♭", "ミ", "ファ", "ファ#", "ソ", "ソ#", "ラ", "シ♭", "シ" };
+
 
         /* 描画ウインドウ作成 */
         final Scene scene = new Scene(chart, 800, 600);
@@ -127,15 +158,19 @@ public final class Recf0 extends Application {
         primaryStage.setOnCloseRequest(req -> executor.shutdown());
         primaryStage.show();
 
-        recorder.addAudioFrameListener((frame, position) -> Platform.runLater(() -> {
+        player.addAudioFrameListener((frame, position) -> Platform.runLater(() -> {
             final double rms = Arrays.stream(frame).map(x -> x * x).average().orElse(0.0);
             final double logRms = 20.0 * Math.log10(rms);
-            final double posInSec = position / recorder.getSampleRate();
-            System.out.printf("Position %d (%.2f sec), RMS %f dB%n", position, posInSec, logRms);
+            final double posInSec = position / player.getSampleRate();
+            final double[] wframe = MathArrays.ebeMultiply(frame, window);
+            final Complex[] spectrum = Le4MusicUtils.rfft(Arrays.copyOf(wframe, fftSize));
 
-            final int fftSize_f0 = 1 << Le4MusicUtils.nextPow2(recorder.getFrameSize());
+            /* スペクトログラム描画 */
+            chart.addSpectrum(spectrum);
+
+            final int fftSize_f0 = 1 << Le4MusicUtils.nextPow2(player.getFrameSize());
             final double[] window_f0 = MathArrays
-                    .normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(recorder.getFrameSize()), fftSize_f0), 1.0);
+                    .normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(player.getFrameSize()), fftSize_f0), 1.0);
             final Stream<Complex[]> spectrogram_f0 = Le4MusicUtils.sliding(frame, window_f0, shiftSize)
                     .map(f -> Le4MusicUtils.rfft(f));
             double[][] specLog_f0 = spectrogram_f0.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
@@ -143,9 +178,9 @@ public final class Recf0 extends Application {
             double[] freq0 = new double[specLog_f0.length];
             for (int m = 0; m < specLog_f0.length; m++) {
                 for (int k = 0; k < specLog_f0[m].length; k++) {
-                    if (specLog_f0[m][k] > 800.0) {
-                        specLog_f0[m][k] = 0.0;
-                    }
+                        if (k * player.getSampleRate() / fftSize_f0 > 500.0) {
+                                specLog_f0[m][k] = 0.0;
+                        }
                 }
                 freq0[m] = Le4MusicUtils.argmax(specLog_f0[m]);
             }
@@ -163,11 +198,58 @@ public final class Recf0 extends Application {
             if (logRms < -100) {
                 min = 0;
             }
-            XYChart.Data<Number, Number> datum = new XYChart.Data<Number, Number>(posInSec,
-                    min * recorder.getSampleRate() / fftSize_f0);
-            data.add(datum);
+            try{
+                FileWriter fw = new FileWriter("f0.txt");
+                if ((position / 320) % 8 == 0) {
+                    XYChart.Data<Number, Number> datum = new XYChart.Data<Number, Number>(posInSec,
+                                    min * player.getSampleRate() / fftSize_f0);
+                    fw.write(String.valueOf(min * player.getSampleRate() / fftSize_f0));
+                    data.add(datum);
+                    datum = new XYChart.Data<Number, Number>(posInSec + 0.02,
+                                    min * player.getSampleRate() / fftSize_f0);
+                    fw.write(String.valueOf(min * player.getSampleRate() / fftSize_f0));
+                    data.add(datum);
+                    datum = new XYChart.Data<Number, Number>(posInSec + 0.04,
+                                    min * player.getSampleRate() / fftSize_f0);
+                    fw.write(String.valueOf(min * player.getSampleRate() / fftSize_f0));
+                    data.add(datum);
+                    datum = new XYChart.Data<Number, Number>(posInSec + 0.06,
+                                    min * player.getSampleRate() / fftSize_f0);
+                    fw.write(String.valueOf(min * player.getSampleRate() / fftSize_f0));
+                    data.add(datum);
+                    datum = new XYChart.Data<Number, Number>(posInSec + 0.08,
+                                    min * player.getSampleRate() / fftSize_f0);
+                    fw.write(String.valueOf(min * player.getSampleRate() / fftSize_f0));
+                    data.add(datum);
+                    datum = new XYChart.Data<Number, Number>(posInSec + 0.10,
+                                    min * player.getSampleRate() / fftSize_f0);
+                    fw.write(String.valueOf(min * player.getSampleRate() / fftSize_f0));
+                    data.add(datum);
+                    datum = new XYChart.Data<Number, Number>(posInSec + 0.12,
+                                    min * player.getSampleRate() / fftSize_f0);
+                    fw.write(String.valueOf(min * player.getSampleRate() / fftSize_f0));
+                    data.add(datum);
+                    datum = new XYChart.Data<Number, Number>(posInSec + 0.14,
+                                    min * player.getSampleRate() / fftSize_f0);
+                    fw.write(String.valueOf(min * player.getSampleRate() / fftSize_f0));
+                    data.add(datum);
+                    int noteNum = (int) Math.round(
+                                    Le4MusicUtils.hz2nn(min * player.getSampleRate() / fftSize_f0));
+                    System.out.println(pitch[noteNum % 12]);
+                }
+                if(posInSec == 273){
+                        fw.close();
+                    }
+        }
+                catch(IOException ex) {
+                        ex.printStackTrace();
+                }
+            
+            
+
         }));
-        recorder.start();
+        /* 録音開始 */
+    Platform.runLater(player::start);
     }
 
 }

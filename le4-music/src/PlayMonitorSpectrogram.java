@@ -117,6 +117,8 @@ public final class PlayMonitorSpectrogram extends Application {
     /* フレーム数 */
     final int frames = (int) Math.round(duration / interval);
 
+    
+
     /* 軸を作成 */
     final NumberAxis xAxis = new NumberAxis(/* axisLabel = */ "Time (seconds)", /* lowerBound = */ -duration,
         /* upperBound = */ 0, /* tickUnit = */ Le4MusicUtils.autoTickUnit(duration));

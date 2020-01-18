@@ -125,6 +125,7 @@ public final class RecMonitorWaveform extends Application {
       final double posInSec = position / recorder.getSampleRate();
       xAxis.setLowerBound(posInSec - frameDuration);
       xAxis.setUpperBound(posInSec);
+      
     }));
 
     /* 録音開始 */

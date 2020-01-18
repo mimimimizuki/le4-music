@@ -8,6 +8,9 @@
   -fx-stroke:#6B8E23;
 }
 
+.default-color0.chart-series-line { -fx-stroke: #e9967a; }
+.default-color1.chart-series-line { -fx-stroke: #f0e68c; }
+
 .chart-plot-background {
   -fx-background-color: #FFEFD5;
 }

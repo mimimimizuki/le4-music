@@ -11,6 +11,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Mixer;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
@@ -21,6 +23,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.text.*;
@@ -41,6 +44,7 @@ import jp.ac.kyoto_u.kuis.le4music.Player.Builder;
 import jp.ac.kyoto_u.kuis.le4music.LineChartWithSpectrogram;
 import static jp.ac.kyoto_u.kuis.le4music.Le4MusicUtils.verbose;
 import jp.ac.kyoto_u.kuis.le4music.Recorder;
+
 
 import java.io.IOException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -101,6 +105,15 @@ public final class karaoke extends Application {
                         return;
                 }
                 final File wavFile = new File(pargs[0]);
+                final File pianoFile = new File(pargs[1]); //piano 
+
+                /* W A V ファイル読み込み */
+                final AudioInputStream stream = AudioSystem.getAudioInputStream(pianoFile);
+                final double[] waveform = Le4MusicUtils.readWaveformMonaural(stream);
+                final AudioFormat format = stream.getFormat();
+                final double sampleRate = format.getSampleRate();
+                final double nyquist = sampleRate * 0.5;
+                stream.close();
 
                 final double duration = Optional.ofNullable(cmd.getOptionValue("duration")).map(Double::parseDouble)
                                 .orElse(Le4MusicUtils.spectrogramDuration);
@@ -109,7 +122,7 @@ public final class karaoke extends Application {
                 /* シフトのサンプル数 */
                 final double shiftDuration = Optional.ofNullable(cmd.getOptionValue("shift")).map(Double::parseDouble)
                                 .orElse(Le4MusicUtils.frameDuration / 8);
-                final int shiftSize = (int) Math.round(shiftDuration * 44100);
+                final int shiftSize_0 = (int) Math.round(shiftDuration * sampleRate);
 
                 File file = new File("/Users/mizuki/le4-music/le4-music/src/kiseki.txt");
                 FileReader fr = new FileReader(file);
@@ -135,6 +148,9 @@ public final class karaoke extends Application {
                 builder.daemon();
                 final Player player = builder.build();
 
+                final int fftSize = 1 << Le4MusicUtils.nextPow2(player.getFrameSize());
+                final int fftSize2 = (fftSize >> 1) + 1;
+
                 /* Recorderオブジェクトを生成 */
                 final Recorder.Builder builder_r = Recorder.builder();
                 Optional.ofNullable(cmd.getOptionValue("rate")).map(Float::parseFloat).ifPresent(builder_r::sampleRate);
@@ -153,8 +169,10 @@ public final class karaoke extends Application {
                 final ExecutorService executor_r = Executors.newSingleThreadExecutor();
 
                 /* 窓関数とFFTのサンプル数 */
-                final int fftSize = 1 << Le4MusicUtils.nextPow2(player.getFrameSize());
-                final int fftSize2 = (fftSize >> 1) + 1;
+
+                final int frameSize_0 = (int) Math.round(frameDuration * sampleRate);
+                final int fftSize_0 = 1 << Le4MusicUtils.nextPow2(frameSize_0);
+                final int fftSize2_0 = (fftSize >> 1) + 1;
 
                 /* 窓関数を求め，それを正規化する */
                 final double[] window = MathArrays.normalizeArray(Le4MusicUtils.hanning(player.getFrameSize()), 1.0);
@@ -162,9 +180,45 @@ public final class karaoke extends Application {
                 /* 各フーリエ変換係数に対応する周波数 */
                 final double[] freqs = IntStream.range(0, fftSize2)
                                 .mapToDouble(i -> i * player.getSampleRate() / fftSize).toArray();
+                /* 窓関数を求め， それを正規化する */
+                final double[] window_0 = MathArrays
+                                .normalizeArray(Arrays.copyOf(Le4MusicUtils.hanning(frameSize_0), fftSize_0), 1.0);
+                /* 短時間フーリエ変換本体 */
+                final Stream<Complex[]> spectrogram_0 = Le4MusicUtils.sliding(waveform, window_0, shiftSize_0)
+                .map(frame -> Le4MusicUtils.rfft(frame));
 
+                /* 複素スペクトログラムを振幅スペクトログラムに 基本周波数用 */
+                double[][] specLog_0 = spectrogram_0.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
+                .toArray(n -> new double[n][]);
+
+                double[] f0_piano = new double[specLog_0.length];
+                double[] new_freq = new double[specLog_0.length];
+                final double lowerf0 = Le4MusicUtils.f0LowerBound;
+                final double upperf0 = 400;
+                for (int i = 0; i < specLog_0.length; i++) {
+                        // specLog[i][j]が振幅
+                        for (int j = 0; j < specLog_0[i].length; j++) {
+                                if (j * sampleRate / fftSize < upperf0 && j * sampleRate / fftSize > lowerf0
+                                                && specLog_0[i][j] > f0_piano[i]) {// 振幅の最大値を取ってくる
+                                        f0_piano[i] = specLog_0[i][j];
+                                        new_freq[i] = j;
+                                }
+                        }
+                }
+                /* データ系列を作成 */
+                final ObservableList<XYChart.Data<Number, Number>> data_piano = IntStream.range(0, f0_piano.length)
+                .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration,
+                                new_freq[i] * 4 * sampleRate / fftSize))
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+                /* データ系列に名前をつける */
+                final XYChart.Series<Number, Number> series_piano = new XYChart.Series<>("guide", data_piano);
                 /* フレーム数 */
                 final int frames = (int) Math.round(duration / interval);
+
+                //guide play
+
+
 
                 /* データ系列を作成 */
                 ObservableList<XYChart.Data<Number, Number>> data_waveform = IntStream
@@ -194,13 +248,55 @@ public final class karaoke extends Application {
                                 /* upperBound = */ 600, /* tickUnit = */ Le4MusicUtils.autoTickUnit(600));
                 yAxis.setAnimated(false);
 
+                /* データ系列を作成 */
+                ObservableList<XYChart.Data<Number, Number>> data_vol = IntStream
+                                .range(-recorder.getFrameSize(), 0).mapToDouble(i -> i / recorder.getSampleRate())
+                                .mapToObj(t -> new XYChart.Data<Number, Number>(t, 0.0))
+                                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+                /* データ系列に名前をつける */
+                final XYChart.Series<Number, Number> series_vol = new XYChart.Series<>("volume", data_vol);
+                
+                /* 軸を作成 */
+                final NumberAxis xAxis_0 = new NumberAxis("Time (seconds)", -duration, 0.0, Le4MusicUtils.autoTickUnit(duration));
+                xAxis.setAnimated(false);
+                final double ampLowerBound =
+                        Optional.ofNullable(cmd.getOptionValue("amp-lo"))
+                                .map(Double::parseDouble)
+                                .orElse(Le4MusicUtils.spectrumAmplitudeLowerBound);
+                final double ampUpperBound =
+                        Optional.ofNullable(cmd.getOptionValue("amp-up"))
+                                .map(Double::parseDouble)
+                                .orElse(Le4MusicUtils.spectrumAmplitudeUpperBound);
+                if (ampUpperBound <= ampLowerBound)
+                        throw new IllegalArgumentException(
+                                "amp-up must be larger than amp-lo: " +
+                                "amp-lo = " + ampLowerBound + ", amp-up = " + ampUpperBound
+                        );
+                final NumberAxis yAxis_0 = new NumberAxis(
+                        /* lowerBound = */ ampLowerBound,
+                        /* upperBound = */ ampUpperBound,
+                        /* tickUnit = */ Le4MusicUtils.autoTickUnit(ampUpperBound - ampLowerBound)
+                );
+                yAxis.setAnimated(false);
+                
+
+                final LineChart<Number, Number> vv = new LineChart<>(xAxis_0, yAxis_0);
+                vv.getData().add(series_vol);
+                vv.setAnimated(false);
+                vv.setCreateSymbols(false);
+                // yAxis.tickLabelsVisible(false);
+                vv.getXAxis().setVisible(false);
+                vv.getYAxis().setVisible(false);
+
+
                 /* 軸を作成 for recoder */
                 final NumberAxis xAxis_waveform = new NumberAxis("Time (seconds)", -duration, 0.0,
                                 Le4MusicUtils.autoTickUnit(duration));
 
                 final NumberAxis yAxis_waveform = new NumberAxis(/* axisLabel = */ "Freqency (Hz)",
-                                /* lowerBound = */ 0.0, /* upperBound = */ 1000,
-                                /* tickUnit = */ Le4MusicUtils.autoTickUnit(1000));
+                                /* lowerBound = */ 0.0, /* upperBound = */ 600,
+                                /* tickUnit = */ Le4MusicUtils.autoTickUnit(600));
 
                 /* スペクトログラム表示chart */
                 final LineChartWithSpectrogram<Number, Number> chart = new LineChartWithSpectrogram<>(xAxis, yAxis);
@@ -218,17 +314,26 @@ public final class karaoke extends Application {
                 /* データアイテムに対してシンボルを作成しない */
                 chart_waveform.setCreateSymbols(false);
                 chart_waveform.getData().add(series_waveform);
-
-                Text t = new Text("");
+                chart_waveform.getData().add(series_piano);
+                Text t = new Text(kashi.get(0) + "\n" + kashi.get(1));
                 t.setFont(new Font(20));
-                t.setText("test");
+                Text chuner = new Text();
+                chuner.setFont(new Font(10));
+                Text yourVoice = new Text();
+                yourVoice.setFont(new Font(10));
 
                 GridPane gridPane = new GridPane();
-                gridPane.setMinSize(400, 600);
+                // gridPane.setMinSize(600, 400);
+                gridPane.getColumnConstraints().add(new ColumnConstraints(600)); //横幅の設定
+                gridPane.getColumnConstraints().add(new ColumnConstraints(600));
                 gridPane.add(chart_waveform, 0, 0); // recorder
-                gridPane.add(chart, 1, 0); // player
-                gridPane.add(t, 0, 1); // kashi
-
+                gridPane.add(chart, 0, 1); // player
+                gridPane.getColumnConstraints().add(new ColumnConstraints(800)); //歌詞の横幅長めに設定
+                gridPane.add(t, 1, 0); // kashi
+                gridPane.getColumnConstraints().add(new ColumnConstraints(100)); //横幅狭く
+                gridPane.add(vv, 1,1);
+                gridPane.add(chuner, 2,0);
+                gridPane.add(yourVoice, 2,1);
                 /* グラフ描画 */
                 final Scene scene = new Scene(gridPane);
                 scene.getStylesheets().add("le4music.css");
@@ -241,6 +346,12 @@ public final class karaoke extends Application {
                 Platform.setImplicitExit(true);
 
                 String[] pitch = new String[] { "ド", "ド#", "レ", "ミ♭", "ミ", "ファ", "ファ#", "ソ", "ソ#", "ラ", "シ♭", "シ" };
+                for(int i = 0; i < specLog_0.length; i++){
+                        int noteNum = (int) Math.round(
+                                                Le4MusicUtils.hz2nn(new_freq[i] * sampleRate / fftSize_0));
+                        chuner.setText(pitch[noteNum%12]);
+                }
+
 
                 recorder.addAudioFrameListener((frame, position) -> Platform.runLater(() -> {
                         final double rms = Arrays.stream(frame).map(x -> x * x).average().orElse(0.0);
@@ -248,7 +359,14 @@ public final class karaoke extends Application {
                         final double posInSec = position / recorder.getSampleRate();
                         // System.out.printf("Position %d (%.2f sec), RMS %f dB%n", position, posInSec,
                         // logRms);
+                        XYChart.Data<Number, Number> datum_1 = new XYChart.Data<Number, Number>(posInSec,logRms);
 
+                        data_vol.add(datum_1);
+                        if(posInSec < 273){
+                                xAxis_0.setUpperBound(posInSec);
+                                xAxis_0.setLowerBound(posInSec - duration);
+                        }
+                        final int shiftSize = (int) Math.round(shiftDuration * player.getSampleRate());
                         final int fftSize_f0 = 1 << Le4MusicUtils.nextPow2(recorder.getFrameSize());
                         final double[] window_f0 = MathArrays.normalizeArray(
                                         Arrays.copyOf(Le4MusicUtils.hanning(recorder.getFrameSize()), fftSize_f0), 1.0);
@@ -309,10 +427,9 @@ public final class karaoke extends Application {
                                 datum = new XYChart.Data<Number, Number>(posInSec + 0.14,
                                                 min * recorder.getSampleRate() / fftSize_f0);
                                 data_waveform.add(datum);
-                                System.out.printf("Position %d (%.2f sec), RMS %f dB%n", position, posInSec, logRms);
                                 int noteNum = (int) Math.round(
                                                 Le4MusicUtils.hz2nn(min * recorder.getSampleRate() / fftSize_f0));
-                                // System.out.println(pitch[noteNum % 12]);
+                                yourVoice.setText(pitch[noteNum % 12]);
                         }
                 }));
                 recorder.start();
@@ -320,6 +437,7 @@ public final class karaoke extends Application {
                 player.addAudioFrameListener((frame, position) -> executor.execute(() ->
 
                 {
+                        
                         final double[] wframe = MathArrays.ebeMultiply(frame, window);
                         final Complex[] spectrum = Le4MusicUtils.rfft(Arrays.copyOf(wframe, fftSize));
                         final double posInSec = position / player.getSampleRate();
@@ -327,31 +445,9 @@ public final class karaoke extends Application {
                         /* スペクトログラム描画 */
                         chart.addSpectrum(spectrum);
 
-                        final int fftSize_f0 = 1 << Le4MusicUtils.nextPow2(recorder.getFrameSize());
-                        final double[] window_f0 = MathArrays.normalizeArray(
-                                        Arrays.copyOf(Le4MusicUtils.hanning(recorder.getFrameSize()), fftSize_f0), 1.0);
-                        final Stream<Complex[]> spectrogram_f0 = Le4MusicUtils.sliding(frame, window_f0, shiftSize)
-                                        .map(f -> Le4MusicUtils.rfft(f));
-                        double[][] specLog_f0 = spectrogram_f0
-                                        .map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
-                                        .toArray(n -> new double[n][]);
-                        double[] freq0 = new double[specLog_f0.length];
-                        for (int m = 0; m < specLog_f0.length; m++) {
-                                for (int k = 0; k < specLog_f0[m].length; k++) {
-                                        if (k * recorder.getSampleRate() / fftSize_f0 > 500.0) {
-                                                specLog_f0[m][k] = 0.0;
-                                        }
-                                }
-                                freq0[m] = Le4MusicUtils.argmax(specLog_f0[m]);
-                        }
-                        double min = freq0[0];
-                        for (int z = 0; z < freq0.length; z++) {
-                                if (min > freq0[z]) {
-                                        min = freq0[z];
-                                }
-                        }
                         if (posInSec > 20 && posInSec < 63 && (posInSec - 22) % 10 == 0.0) {
                                 System.out.println("here01");
+                                
                                 t.setText(kashi.get(((int) posInSec - 22) / 10) + "\n"
                                                 + kashi.get(((int) posInSec - 22) / 10 + 1));// 0-3
                                 System.out.println("second ly is" + (((int) posInSec - 22) / 10 + 1));
@@ -380,7 +476,7 @@ public final class karaoke extends Application {
                         } else if (posInSec < 247 && posInSec >= 234) {
                                 System.out.println("here06");
                                 t.setText(kashi.get(22));
-                        } else if (posInSec >= 248 && posInSec <= 258) {
+                        } else if (posInSec >= 248 && posInSec < 258) {
                                 if ((posInSec - 18) % 10 == 0.0) {
                                         System.out.println("here07");
                                         t.setText(kashi.get((int) (posInSec - 18) / 10) + "\n"
