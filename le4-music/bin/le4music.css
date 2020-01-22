@@ -8,8 +8,16 @@
   -fx-stroke:#6B8E23;
 }
 
+.default-color0.chart-series-line { -fx-stroke: #e9967a; }
+.default-color1.chart-series-line { -fx-stroke: dimgray; }
+
 .chart-plot-background {
   -fx-background-color: #FFEFD5;
+}
+
+#yourVoice {
+  -fx-stroke : #e9967a;
+  -fx-font-size : 15px;
 }
 
 .on-spectrogram .chart-series-line {
