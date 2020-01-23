@@ -220,12 +220,7 @@ public final class karaoke extends Application {
                         int noteNum = (int) Math.round(Le4MusicUtils.hz2nn(new_freq[i] * sampleRate / fftSize_0));
                         oto[i] = pitch[noteNum % 12];
                 }
-                System.out.println(oto[0]);
-                System.out.println(oto[1]);
-                System.out.println(oto[2]);
-                System.out.println(oto[3]);
-                System.out.println(oto[4]);
-                double zurasu = 1.0; // kiseki -> 1.4 ttest -> 0.8 test -> 1.0
+                double zurasu = 1.4; // kiseki -> 1.4 ttest -> 0.8 test -> 1.0
                 System.out.println("the frequency size is " + new_freq.length);
                 /* データ系列を作成 ガイドの基本周波数 */
                 final ObservableList<XYChart.Data<Number, Number>> data_piano = IntStream.range(0, f0_piano.length)
@@ -273,7 +268,7 @@ public final class karaoke extends Application {
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
                 /* データ系列に名前をつける */
-                final XYChart.Series<Number, Number> series_vol = new XYChart.Series<>("volume", data_vol);
+                final XYChart.Series<Number, Number> series_vol = new XYChart.Series<>(data_vol);
 
                 /* 軸を作成 */
                 final NumberAxis xAxis_0 = new NumberAxis("Time (seconds)", -duration, 0.0,
@@ -294,8 +289,9 @@ public final class karaoke extends Application {
                 final LineChart<Number, Number> vv = new LineChart<>(xAxis_0, yAxis_0);
                 vv.getData().add(series_vol);
                 vv.setAnimated(false);
+                vv.setLegendVisible(false);
                 vv.setCreateSymbols(false);
-                // yAxis.tickLabelsVisible(false);
+                vv.setTitle("Volume");
                 vv.getXAxis().setVisible(false);
                 vv.getYAxis().setVisible(false);
 
@@ -316,7 +312,7 @@ public final class karaoke extends Application {
 
                 final LineChart<Number, Number> chart_waveform = new LineChart<Number, Number>(xAxis_waveform,
                                 yAxis_waveform);
-                chart_waveform.setTitle("Waveform");
+                chart_waveform.setTitle("Pitch");
                 chart_waveform.setLegendVisible(false);
                 /* データの追加・削除時にアニメーション（フェードイン・アウトなど）しない */
                 chart_waveform.setAnimated(false);
@@ -330,10 +326,10 @@ public final class karaoke extends Application {
                 t.setLineSpacing(5.0);
                 Text chuner = new Text(620, 20, "");
                 chuner.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+                chuner.setFill(Color.DIMGRAY);
                 Text yourVoice = new Text(620, 40, "");
                 yourVoice.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
                 yourVoice.setFill(Color.DIMGRAY);
-                // yourVoice.setId("yourVoice");
 
                 GridPane gridPane = new GridPane();
                 // gridPane.setMinSize(600, 400);
@@ -409,7 +405,7 @@ public final class karaoke extends Application {
                         if (posInSec > duration) {
                                 data_waveform.remove(0, 1);
                         }
-                        if (logRms < -90) {
+                        if (logRms < -90) { // 無声判定
                                 min = 0;
                         }
                         if ((position / 320) % 8 == 0) {
@@ -457,7 +453,6 @@ public final class karaoke extends Application {
                         chart.addSpectrum(spectrum);
                         // kashi
                         if (posInSec > 22 && (10 * posInSec - 220) % 106 == 0.0 && posInSec < 138) {
-                                System.out.print("here");
                                 t.setText(kashi.get((int) ((posInSec - 22) / 10.6)) + "\n"
                                                 + kashi.get((int) ((posInSec - 22) / 10.6) + 1));
                         }
@@ -469,25 +464,30 @@ public final class karaoke extends Application {
                         // (x,y) = i * shiftDuration + 1.4, new_freq[i]
 
                         if (posInSec > zurasu) {
-                                int i = (int) ((posInSec - zurasu + 0.6) / shiftDuration); // 0.6があうけど点数高いは0.5
+                                int i = (int) ((posInSec - zurasu + 0.5) / shiftDuration); // 0.6があうけど点数高いは0.5
                                 chuner.setText(oto[i]);
                         }
                         double score_t = Double.parseDouble(yourVoice.getText().split(",")[1]); // 現在のスコア
                         String p = yourVoice.getText().split(",")[0];
-                        if (posInSec > 22 && posInSec % 1.0 == 0.0) {
-                                int i = (int) posInSec - 20;
-                                if (p.contains(chuner.getText())) {
+                        if (posInSec > 22 && posInSec * 10 % 1.0 == 0.0) {
+                                int i = (int) ((posInSec - 21) * 10);
+                                if (p.contains(chuner.getText()) && score_t < 100) {
+                                        t.setFill(Color.GREEN);
                                         yourVoice.setFill(Color.GREEN);
-                                        if (posInSec % 1.0 == 0.0) { // １秒に一回だけ更新する
-                                                score_t = (score_t * (i - 1) + score_t + 15.0) / i;
+                                        if (posInSec % 1.0 == 0.0) { // 0.1秒に一回だけ更新する
+                                                score_t = (score_t * (i - 1) + 100) / i + 1.0;
                                                 yourVoice.setText(p + ", " + score_t);
                                         }
                                 } else {
+                                        t.setFill(Color.DIMGRAY);
                                         yourVoice.setFill(Color.DIMGRAY);
                                         if (posInSec % 1.0 == 0.0) { // １秒に一回だけ更新する
-                                                score_t = (score_t * (i - 1) + score_t - 5.0) / i;
+                                                score_t = (score_t * (i - 1) + score_t - 5.0) / i - 0.4;
                                                 yourVoice.setText(p + ", " + score_t);
                                         }
+                                }
+                                if (score_t >= 100) {
+                                        t.setFill(Color.ORANGE);
                                 }
                         }
 
