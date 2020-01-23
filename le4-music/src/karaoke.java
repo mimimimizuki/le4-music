@@ -220,7 +220,12 @@ public final class karaoke extends Application {
                         int noteNum = (int) Math.round(Le4MusicUtils.hz2nn(new_freq[i] * sampleRate / fftSize_0));
                         oto[i] = pitch[noteNum % 12];
                 }
-                double zurasu = 0.8;
+                System.out.println(oto[0]);
+                System.out.println(oto[1]);
+                System.out.println(oto[2]);
+                System.out.println(oto[3]);
+                System.out.println(oto[4]);
+                double zurasu = 1.0; // kiseki -> 1.4 ttest -> 0.8 test -> 1.0
                 System.out.println("the frequency size is " + new_freq.length);
                 /* データ系列を作成 ガイドの基本周波数 */
                 final ObservableList<XYChart.Data<Number, Number>> data_piano = IntStream.range(0, f0_piano.length)
@@ -327,6 +332,7 @@ public final class karaoke extends Application {
                 chuner.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
                 Text yourVoice = new Text(620, 40, "");
                 yourVoice.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+                yourVoice.setFill(Color.DIMGRAY);
                 // yourVoice.setId("yourVoice");
 
                 GridPane gridPane = new GridPane();
@@ -339,8 +345,8 @@ public final class karaoke extends Application {
                 gridPane.add(t, 1, 0); // kashi
                 gridPane.getColumnConstraints().add(new ColumnConstraints(100)); // 横幅狭く
                 gridPane.add(vv, 1, 1);
-                gridPane.add(chuner, 2, 0);
-                gridPane.add(yourVoice, 2, 1);
+                gridPane.add(chuner, 0, 2);
+                gridPane.add(yourVoice, 1, 2);
                 /* グラフ描画 */
                 final Scene scene = new Scene(gridPane);
                 scene.getStylesheets().add("le4music.css");
@@ -463,22 +469,23 @@ public final class karaoke extends Application {
                         // (x,y) = i * shiftDuration + 1.4, new_freq[i]
 
                         if (posInSec > zurasu) {
-                                chuner.setText(oto[(int) ((posInSec - zurasu) / shiftDuration)]);
+                                int i = (int) ((posInSec - zurasu + 0.6) / shiftDuration); // 0.6があうけど点数高いは0.5
+                                chuner.setText(oto[i]);
                         }
                         double score_t = Double.parseDouble(yourVoice.getText().split(",")[1]); // 現在のスコア
                         String p = yourVoice.getText().split(",")[0];
                         if (posInSec > 22 && posInSec % 1.0 == 0.0) {
-                                int i = (int) ((posInSec - zurasu) / shiftDuration);
+                                int i = (int) posInSec - 20;
                                 if (p.contains(chuner.getText())) {
                                         yourVoice.setFill(Color.GREEN);
                                         if (posInSec % 1.0 == 0.0) { // １秒に一回だけ更新する
-                                                score_t = (score_t * (i - 1) + score_t + 10.0) / i;
+                                                score_t = (score_t * (i - 1) + score_t + 15.0) / i;
                                                 yourVoice.setText(p + ", " + score_t);
                                         }
                                 } else {
-                                        yourVoice.setFill(Color.ORANGE);
+                                        yourVoice.setFill(Color.DIMGRAY);
                                         if (posInSec % 1.0 == 0.0) { // １秒に一回だけ更新する
-                                                score_t = (score_t * (i - 1) + score_t - 3.0) / i;
+                                                score_t = (score_t * (i - 1) + score_t - 5.0) / i;
                                                 yourVoice.setText(p + ", " + score_t);
                                         }
                                 }
