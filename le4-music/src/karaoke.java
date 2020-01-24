@@ -21,8 +21,17 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
+import javafx.geometry.Insets;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.LineChart;
@@ -186,7 +195,6 @@ public final class karaoke extends Application {
                 double[][] specLog_0 = spectrogram_0.map(sp -> Arrays.stream(sp).mapToDouble(c -> c.abs()).toArray())
                                 .toArray(n -> new double[n][]);
 
-                double[] f0_piano = new double[specLog_0.length];
                 double[] new_freq = new double[specLog_0.length];
                 final double lowerf0 = Le4MusicUtils.f0LowerBound;
                 final double upperf0 = 500;
@@ -194,10 +202,11 @@ public final class karaoke extends Application {
                 for (int i = 0; i < specLog_0.length; i++) {
                         // specLog[i][j]が振幅
                         double sum = 0;
+                        double f0_piano = 0.0;
                         for (int j = 0; j < specLog_0[i].length; j++) {
                                 if (j * sampleRate / fftSize_0 < upperf0 && j * sampleRate / fftSize_0 > lowerf0
-                                                && specLog_0[i][j] > f0_piano[i]) {// 振幅の最大値を取ってくる
-                                        f0_piano[i] = specLog_0[i][j];
+                                                && specLog_0[i][j] > f0_piano) {// 振幅の最大値を取ってくる
+                                        f0_piano = specLog_0[i][j];
                                         new_freq[i] = j;
                                 }
                                 sum += specLog_0[i][j] * specLog_0[i][j];
@@ -220,7 +229,7 @@ public final class karaoke extends Application {
                 }
                 double zurasu = 1.4; // 第一引数が kiseki -> 1.4 ttest -> 0.8 test -> 0.9
                 /* データ系列を作成 ガイドの基本周波数 */
-                final ObservableList<XYChart.Data<Number, Number>> data_piano = IntStream.range(0, f0_piano.length)
+                final ObservableList<XYChart.Data<Number, Number>> data_piano = IntStream.range(0, new_freq.length)
                                 .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration + zurasu,
                                                 new_freq[i] * sampleRate / fftSize_0))
                                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
@@ -255,7 +264,7 @@ public final class karaoke extends Application {
                         throw new IllegalArgumentException("freq-up must be larger than freq-lo: " + "freq-lo = "
                                         + freqLowerBound + ", freq-up = " + freqUpperBound);
                 final NumberAxis yAxis = new NumberAxis(/* axisLabel = */ "Frequency (Hz)", /* lowerBound = */ 0.0,
-                                /* upperBound = */ 600, /* tickUnit = */ Le4MusicUtils.autoTickUnit(600));
+                                /* upperBound = */ 800, /* tickUnit = */ Le4MusicUtils.autoTickUnit(800));
                 yAxis.setAnimated(false);
 
                 /* データ系列を作成 音量 */
@@ -479,13 +488,28 @@ public final class karaoke extends Application {
                                         t.setFill(Color.DIMGRAY);
                                         yourVoice.setFill(Color.DIMGRAY);
                                         if (posInSec % 1.0 == 0.0) { // １秒に一回だけ更新する
-                                                score_t = (score_t * (i - 1) + score_t - 5.0) / i - 0.4;
+                                                score_t = (score_t * (i - 1) + score_t - 10.0) / i - 0.4;
                                                 yourVoice.setText(p + ", " + score_t);
                                         }
                                 }
                                 if (score_t >= 100) {
                                         yourVoice.setText(p + ", 100.0"); // 満点だった!
-                                        t.setFill(Color.web("#6495ED"));
+                                        t.setFill(Color.DIMGRAY);
+                                        gridPane.setStyle(
+                                                        "-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #99CC00,#009900)");
+                                        // #6495ED
+                                        // gridPane.setBackground(new Background(new
+                                        // BackgroundFill(Color.web("#99FF00"),
+                                        // CornerRadii.EMPTY, Insets.EMPTY)));
+                                        // Image fireworks = new Image(
+                                        // "https://www.wtoc.com/resizer/aeEvOVDsWjrFKaaoXeKPit_NKDY=/1200x600/arc-anglerfish-arc2-prod-raycom.s3.amazonaws.com/public/B63JYCMR5ZFCPPKTQDDHXPN3HY.jpg");
+                                        // gridPane.setBackground(new Background(new BackgroundImage(fireworks,
+                                        // BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
+                                        // BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
+                                } else {
+                                        gridPane.setStyle("-fx-background-color: white");
+                                        // gridPane.setBackground(new Background(new BackgroundFill(
+                                        // Color.rgb(255, 255, 255), CornerRadii.EMPTY, Insets.EMPTY)));
                                 }
                         }
 
