@@ -165,8 +165,6 @@ public final class karaoke extends Application {
 
                 /* データ処理スレッド player */
                 final ExecutorService executor = Executors.newSingleThreadExecutor();
-                /* データ処理スレッド recoder */
-                final ExecutorService executor_r = Executors.newSingleThreadExecutor();
 
                 /* 窓関数とFFTのサンプル数 */
 
@@ -220,8 +218,7 @@ public final class karaoke extends Application {
                         int noteNum = (int) Math.round(Le4MusicUtils.hz2nn(new_freq[i] * sampleRate / fftSize_0));
                         oto[i] = pitch[noteNum % 12];
                 }
-                double zurasu = 1.4; // kiseki -> 1.4 ttest -> 0.8 test -> 1.0
-                System.out.println("the frequency size is " + new_freq.length);
+                double zurasu = 1.4; // 第一引数が kiseki -> 1.4 ttest -> 0.8 test -> 0.9
                 /* データ系列を作成 ガイドの基本周波数 */
                 final ObservableList<XYChart.Data<Number, Number>> data_piano = IntStream.range(0, f0_piano.length)
                                 .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration + zurasu,
@@ -350,7 +347,6 @@ public final class karaoke extends Application {
                 primaryStage.setTitle(getClass().getName());
                 /* ウインドウを閉じたときに他スレッドも停止させる */
                 primaryStage.setOnCloseRequest(req -> executor.shutdown());
-                primaryStage.setOnCloseRequest(req -> executor_r.shutdown());
                 primaryStage.show();
                 Platform.setImplicitExit(true);
 
@@ -464,21 +460,22 @@ public final class karaoke extends Application {
                         // (x,y) = i * shiftDuration + 1.4, new_freq[i]
 
                         if (posInSec > zurasu) {
-                                int i = (int) ((posInSec - zurasu + 0.5) / shiftDuration); // 0.6があうけど点数高いは0.5
+                                int i = (int) ((posInSec - zurasu + 0.3) / shiftDuration); // 0.6があうけど点数高いは0.5.
+                                                                                           // (音程表示が曲と合っていない)
                                 chuner.setText(oto[i]);
                         }
                         double score_t = Double.parseDouble(yourVoice.getText().split(",")[1]); // 現在のスコア
                         String p = yourVoice.getText().split(",")[0];
                         if (posInSec > 22 && posInSec * 10 % 1.0 == 0.0) {
                                 int i = (int) ((posInSec - 21) * 10);
-                                if (p.contains(chuner.getText()) && score_t < 100) {
-                                        t.setFill(Color.GREEN);
-                                        yourVoice.setFill(Color.GREEN);
+                                if (p.contains(chuner.getText())) {
+                                        t.setFill(Color.web("#e9967a")); // 音程一緒だったら色を変える
+                                        yourVoice.setFill(Color.web("#e9967a"));
                                         if (posInSec % 1.0 == 0.0) { // 0.1秒に一回だけ更新する
                                                 score_t = (score_t * (i - 1) + 100) / i + 1.0;
-                                                yourVoice.setText(p + ", " + score_t);
+                                                yourVoice.setText(p + ", " + score_t); // 満点じゃなかったら！
                                         }
-                                } else {
+                                } else if (!p.contains(chuner.getText())) { // 自分の音程とガイドの音程が合っていない時
                                         t.setFill(Color.DIMGRAY);
                                         yourVoice.setFill(Color.DIMGRAY);
                                         if (posInSec % 1.0 == 0.0) { // １秒に一回だけ更新する
@@ -487,7 +484,8 @@ public final class karaoke extends Application {
                                         }
                                 }
                                 if (score_t >= 100) {
-                                        t.setFill(Color.ORANGE);
+                                        yourVoice.setText(p + ", 100.0"); // 満点だった!
+                                        t.setFill(Color.web("#6495ED"));
                                 }
                         }
 
