@@ -227,7 +227,10 @@ public final class karaoke extends Application {
                         int noteNum = (int) Math.round(Le4MusicUtils.hz2nn(new_freq[i] * sampleRate / fftSize_0));
                         oto[i] = pitch[noteNum % 12];
                 }
-                double zurasu = 1.4; // 第一引数が kiseki -> 1.4 ttest -> 0.8 test -> 0.9
+                if (wavFile == "../test.wav") {
+
+                }
+                double zurasu = 0.9; // 第一引数が kiseki -> 1.4 ttest -> 0.8 test -> 0.9
                 /* データ系列を作成 ガイドの基本周波数 */
                 final ObservableList<XYChart.Data<Number, Number>> data_piano = IntStream.range(0, new_freq.length)
                                 .mapToObj(i -> new XYChart.Data<Number, Number>(i * shiftDuration + zurasu,
@@ -292,7 +295,7 @@ public final class karaoke extends Application {
                                 /* tickUnit = */ Le4MusicUtils.autoTickUnit(ampUpperBound - ampLowerBound));
                 yAxis.setAnimated(false);
 
-                final LineChart<Number, Number> vv = new LineChart<>(xAxis_0, yAxis_0);
+                final LineChart<Number, Number> vv = new LineChart<>(xAxis_0, yAxis_0); // graph for volume
                 vv.getData().add(series_vol);
                 vv.setAnimated(false);
                 vv.setLegendVisible(false);
@@ -326,14 +329,14 @@ public final class karaoke extends Application {
                 chart_waveform.setCreateSymbols(false);
                 chart_waveform.getData().add(series_waveform);
                 chart_waveform.getData().add(series_piano);
-                Text t = new Text(kashi.get(0) + "\n" + kashi.get(1));
-                t.setFont(new Font(23));
+                Text t = new Text(kashi.get(0) + "\n" + kashi.get(1)); // 歌詞を表示するためにtext
+                t.setFont(new Font(23)); // font size
                 t.setFill(Color.DIMGRAY);
-                t.setLineSpacing(5.0);
-                Text chuner = new Text(620, 20, "");
+                t.setLineSpacing(5.0); // 行間
+                Text chuner = new Text(620, 20, ""); // guide pitch
                 chuner.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
                 chuner.setFill(Color.DIMGRAY);
-                Text yourVoice = new Text(620, 40, "");
+                Text yourVoice = new Text(620, 40, ""); // your pitch
                 yourVoice.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
                 yourVoice.setFill(Color.DIMGRAY);
 
@@ -359,8 +362,8 @@ public final class karaoke extends Application {
                 primaryStage.show();
                 Platform.setImplicitExit(true);
 
-                double score = 60.0; // 音程がずれると(score * 個数(i) + -1) / i
-                                     // 音程があっていると(score * 個数(i) + 1 / i)
+                double score = 95.0; // 音程がずれると(score * 個数(i-1) - 10) / i - 0.4
+                                     // 音程があっていると(score * 個数(i-1) + 100 / i) + 1.0
                 yourVoice.setText(yourVoice.getText() + ", " + score);
 
                 // recorderですること:聞き取った音楽の基本周波数をゲット、ピッチをゲット、
@@ -372,11 +375,7 @@ public final class karaoke extends Application {
                         // logRms);
                         XYChart.Data<Number, Number> datum_1 = new XYChart.Data<Number, Number>(posInSec, logRms);
 
-                        data_vol.add(datum_1);
-                        if (posInSec < 150) {
-                                xAxis_0.setUpperBound(posInSec);
-                                xAxis_0.setLowerBound(posInSec - duration);
-                        }
+                        data_vol.add(datum_1); // add volume to graph
                         final int shiftSize = (int) Math.round(shiftDuration * player.getSampleRate());
                         final int fftSize_f0 = 1 << Le4MusicUtils.nextPow2(recorder.getFrameSize());
                         final double[] window_f0 = MathArrays.normalizeArray(
@@ -405,6 +404,8 @@ public final class karaoke extends Application {
                         if (posInSec < 150) {
                                 xAxis_waveform.setLowerBound(posInSec - duration);
                                 xAxis_waveform.setUpperBound(posInSec);
+                                xAxis_0.setUpperBound(posInSec);
+                                xAxis_0.setLowerBound(posInSec - duration);
                         }
 
                         if (posInSec > duration) {
@@ -443,6 +444,7 @@ public final class karaoke extends Application {
                                 double score_t = Double.parseDouble(yourVoice.getText().split(",")[1]); // 現在のスコア
                                 yourVoice.setText(pitch[noteNum % 12] + ", " + score_t);
                         }
+
                 }));
                 recorder.start();
 
@@ -469,7 +471,7 @@ public final class karaoke extends Application {
                         // (x,y) = i * shiftDuration + 1.4, new_freq[i]
 
                         if (posInSec > zurasu) {
-                                int i = (int) ((posInSec - zurasu + 0.3) / shiftDuration); // 0.6があうけど点数高いは0.5.
+                                int i = (int) ((posInSec - zurasu + 0.4) / shiftDuration); // 0.6があうけど点数高いは0.5.
                                                                                            // (音程表示が曲と合っていない)
                                 chuner.setText(oto[i]);
                         }
@@ -478,7 +480,7 @@ public final class karaoke extends Application {
                         if (posInSec > 22 && posInSec * 10 % 1.0 == 0.0) {
                                 int i = (int) ((posInSec - 21) * 10);
                                 if (p.contains(chuner.getText())) {
-                                        t.setFill(Color.web("#e9967a")); // 音程一緒だったら色を変える
+                                        t.setFill(Color.web("#e9967a")); // 音程一緒だったら色を変える(自分の音程と歌詞を)
                                         yourVoice.setFill(Color.web("#e9967a"));
                                         if (posInSec % 1.0 == 0.0) { // 0.1秒に一回だけ更新する
                                                 score_t = (score_t * (i - 1) + 100) / i + 1.0;
@@ -496,16 +498,22 @@ public final class karaoke extends Application {
                                         yourVoice.setText(p + ", 100.0"); // 満点だった!
                                         t.setFill(Color.DIMGRAY);
                                         gridPane.setStyle(
-                                                        "-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #99CC00,#009900)");
+                                                        "-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #99CC00,#009900 )");
                                         // #6495ED
+
+                                        /* 緑一色にしたい場合. */
                                         // gridPane.setBackground(new Background(new
                                         // BackgroundFill(Color.web("#99FF00"),
                                         // CornerRadii.EMPTY, Insets.EMPTY)));
-                                        // Image fireworks = new Image(
-                                        // "https://www.wtoc.com/resizer/aeEvOVDsWjrFKaaoXeKPit_NKDY=/1200x600/arc-anglerfish-arc2-prod-raycom.s3.amazonaws.com/public/B63JYCMR5ZFCPPKTQDDHXPN3HY.jpg");
+
+                                        /* 背景に画像を入れたい場合. */
+                                        // BackgroundSize bs = new BackgroundSize(BackgroundSize.AUTO, <-中央に一つだけ表示するため.
+                                        // BackgroundSize.AUTO,
+                                        // false, false, false, true);
+                                        // Image fireworks = new Image("https://tower.jp/images/51/64151.jpg");
                                         // gridPane.setBackground(new Background(new BackgroundImage(fireworks,
                                         // BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT,
-                                        // BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT)));
+                                        // BackgroundPosition.DEFAULT, bs)));
                                 } else {
                                         gridPane.setStyle("-fx-background-color: white");
                                         // gridPane.setBackground(new Background(new BackgroundFill(
