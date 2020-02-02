@@ -133,7 +133,7 @@ public final class karaoke extends Application {
                                 .orElse(Le4MusicUtils.frameDuration / 8);
                 final int shiftSize_0 = (int) Math.round(shiftDuration * sampleRate);
 
-                File file = new File("/Users/mizuki/le4-music/le4-music/src/kiseki.txt");
+                File file = new File("{/kiseki.txtのPath}");
                 FileReader fr = new FileReader(file);
                 BufferedReader br = new BufferedReader(fr);
                 ArrayList<String> kashi = new ArrayList<>();
@@ -226,9 +226,6 @@ public final class karaoke extends Application {
                 for (int i = 0; i < specLog_0.length; i++) {
                         int noteNum = (int) Math.round(Le4MusicUtils.hz2nn(new_freq[i] * sampleRate / fftSize_0));
                         oto[i] = pitch[noteNum % 12];
-                }
-                if (wavFile == "../test.wav") {
-
                 }
                 double zurasu = 0.9; // 第一引数が kiseki -> 1.4 ttest -> 0.8 test -> 0.9
                 /* データ系列を作成 ガイドの基本周波数 */
